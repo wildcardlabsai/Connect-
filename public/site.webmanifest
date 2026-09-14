@@ -1,0 +1,13 @@
+{
+  "name": "ConnectCymru",
+  "short_name": "ConnectCymru",
+  "description": "Connecting Welsh industry.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F3EE",
+  "theme_color": "#171A1C",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

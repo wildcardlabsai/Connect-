@@ -1,0 +1,87 @@
+.wales {
+  position: relative;
+  width: 100%;
+  color: var(--text);
+}
+
+.wales__svg {
+  width: 100%;
+  height: auto;
+  max-height: 78vh;
+  overflow: visible;
+}
+
+.wales__land path {
+  fill: color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.wales__grid { color: var(--text); }
+
+.wales__coast path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 42%, transparent);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+
+/* --- Connection lines ------------------------------------------------------
+   Drawn in once when the map scrolls into view, then left alone. */
+.wales__links line {
+  stroke: var(--c-orange);
+  stroke-width: 1;
+  stroke-dasharray: 1 0;
+  opacity: 0;
+}
+
+.wales.is-live .wales__links line {
+  animation: wales-link 900ms var(--ease-out) forwards;
+  animation-delay: calc(140ms + var(--i) * 85ms);
+}
+
+@keyframes wales-link {
+  from { opacity: 0; stroke-dashoffset: 40; stroke-dasharray: 0 40; }
+  to { opacity: 0.62; stroke-dashoffset: 0; stroke-dasharray: 40 0; }
+}
+
+/* --- Points ---------------------------------------------------------------- */
+.wales__points g {
+  opacity: 0;
+}
+
+.wales.is-live .wales__points g {
+  animation: wales-point 520ms var(--ease-out) forwards;
+  animation-delay: calc(320ms + var(--i) * 75ms);
+}
+
+@keyframes wales-point {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.wales__dot {
+  fill: var(--c-red);
+}
+
+.wales__halo {
+  fill: none;
+  stroke: var(--c-red);
+  stroke-width: 1;
+  opacity: 0.28;
+}
+
+.wales__label {
+  font-size: 9.5px;
+  font-weight: 550;
+  letter-spacing: 0.04em;
+  fill: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .wales__label { font-size: 11px; }
+  .wales__coast path { stroke-width: 1.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wales__links line { opacity: 0.62; animation: none; }
+  .wales__points g { opacity: 1; animation: none; }
+}

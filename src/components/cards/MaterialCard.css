@@ -1,0 +1,52 @@
+.material-card { min-width: 0; }
+
+.material-card__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.material-card__photo { width: 100%; }
+
+.material-card__text {
+  padding-top: var(--s-4);
+  margin-top: var(--s-4);
+  border-top: 1px solid var(--line);
+  transition: border-color var(--d-base) var(--ease);
+}
+
+.material-card__link:hover .material-card__text { border-top-color: var(--c-red); }
+
+.material-card__name {
+  font-size: var(--t-h4);
+  font-weight: 600;
+  letter-spacing: -0.016em;
+  margin-bottom: var(--s-2);
+}
+
+.material-card__summary {
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 34ch;
+}
+
+/* --- Grid used by the home page and the materials directory ----------------
+   Six items, so the column count steps 1 -> 2 -> 3 and never leaves an orphan
+   on the last row. */
+.material-grid {
+  display: grid;
+  gap: var(--s-7) var(--s-5);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 620px) {
+  .material-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-8) var(--s-6);
+  }
+}
+
+@media (min-width: 1000px) {
+  .material-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

@@ -1,0 +1,126 @@
+/* --- Compact grid (home page) --------------------------------------------- */
+.stages--grid {
+  display: grid;
+  gap: var(--s-6) var(--s-5);
+  grid-template-columns: 1fr;
+}
+
+/* Four stages: two by two on tablets, one row of four on desktop. */
+@media (min-width: 560px) {
+  .stages--grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1040px) {
+  .stages--grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding-top: var(--s-4);
+  border-top: 2px solid var(--text);
+  min-width: 0;
+}
+
+.stage__number {
+  font-size: var(--t-fine);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+  color: var(--c-red);
+}
+
+.stage__title {
+  font-size: var(--t-h3);
+  letter-spacing: -0.02em;
+}
+
+.stage__summary {
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  line-height: 1.56;
+}
+
+/* --- Detailed rows (How It Works) ------------------------------------------ */
+.stages--rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.stage-row {
+  display: grid;
+  gap: var(--s-4);
+  padding-block: var(--s-7);
+  border-top: 1px solid var(--line);
+}
+
+.stage-row:last-child { border-bottom: 1px solid var(--line); }
+
+.stage-row__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+}
+
+.stage-row__number {
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  color: transparent;
+  -webkit-text-stroke: 1.25px var(--accent-2-text);
+}
+
+.stage-row__title {
+  font-size: var(--t-h2);
+  letter-spacing: var(--ls-heading);
+}
+
+.stage-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.stage-row__detail {
+  font-size: var(--t-lead);
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 54ch;
+}
+
+.stage-row__points {
+  display: grid;
+  gap: var(--s-2) var(--s-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  font-size: var(--t-small);
+}
+
+.stage-row__points li {
+  position: relative;
+  padding-left: var(--s-4);
+  padding-block: var(--s-1);
+  color: var(--text);
+}
+
+.stage-row__points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.82em;
+  width: 5px;
+  height: 5px;
+  background-color: var(--accent-2-text);
+}
+
+@media (min-width: 900px) {
+  .stage-row {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--s-8);
+    padding-block: var(--s-8);
+  }
+
+  .stage-row__head { flex-direction: column; gap: var(--s-4); align-items: flex-start; }
+}

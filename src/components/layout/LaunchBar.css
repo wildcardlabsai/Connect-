@@ -1,0 +1,88 @@
+.launchbar {
+  background-color: var(--c-ink);
+  color: var(--c-paper);
+  border-bottom: 1px solid rgba(245, 243, 238, 0.1);
+}
+
+.launchbar__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-height: var(--launchbar-h);
+  padding-block: 0.5rem;
+}
+
+.launchbar__status {
+  display: flex;
+  align-items: center;
+  gap: 0.65em;
+  flex: none;
+  font-size: var(--t-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.launchbar__mark {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background-color: var(--c-red);
+}
+
+.launchbar__support {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-fine);
+  color: rgba(245, 243, 238, 0.6);
+  line-height: 1.3;
+  border-left: 1px solid rgba(245, 243, 238, 0.16);
+  padding-left: var(--s-4);
+}
+
+.launchbar__link {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: var(--t-fine);
+  font-weight: 550;
+  color: var(--c-paper);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(245, 243, 238, 0.35);
+  padding-bottom: 1px;
+  transition: border-color var(--d-fast) var(--ease);
+}
+
+.launchbar__label-short { display: none; }
+
+.launchbar__link svg { transition: transform var(--d-base) var(--ease-out); }
+.launchbar__link:hover { border-bottom-color: var(--c-paper); }
+.launchbar__link:hover svg { transform: translateX(3px); }
+
+@media (max-width: 860px) {
+  .launchbar__support { display: none; }
+  .launchbar__inner { justify-content: space-between; }
+}
+
+@media (max-width: 479px) {
+  .launchbar__inner { gap: var(--s-3); }
+
+  /* Let the announcement take the space it needs and shorten the link. */
+  .launchbar__status {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+  }
+
+  .launchbar__link { font-size: 0.6875rem; }
+  .launchbar__link svg { display: none; }
+  .launchbar__label-long { display: none; }
+  .launchbar__label-short { display: inline; }
+}
+
+@media (max-width: 359px) {
+  .launchbar__status { letter-spacing: 0.06em; }
+}

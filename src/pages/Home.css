@@ -1,0 +1,286 @@
+/* ==========================================================================
+   Home page
+   ========================================================================== */
+
+/* --- Hero ------------------------------------------------------------------ */
+.hero {
+  padding-top: clamp(2.5rem, 1.4rem + 4.6vw, 5rem);
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+.hero__inner {
+  display: grid;
+  gap: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  align-items: center;
+  padding-bottom: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+}
+
+.hero__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-width: 0;
+}
+
+.hero__title {
+  font-size: var(--t-display);
+  font-weight: 600;
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+  max-width: 12ch;
+  margin-top: var(--s-1);
+  text-wrap: balance;
+}
+
+/* The only flash of colour in the headline. */
+.hero__dot { color: var(--c-red); }
+
+.hero__lead {
+  font-size: var(--t-lead);
+  line-height: 1.5;
+  color: var(--c-paper);
+  max-width: 46ch;
+}
+
+.hero__support {
+  font-size: var(--t-small);
+  line-height: 1.65;
+  color: var(--text-invert-muted);
+  max-width: 50ch;
+  padding-left: var(--s-4);
+  border-left: 1px solid var(--line-invert-strong);
+}
+
+.hero__actions { margin-top: var(--s-3); }
+
+.hero__media {
+  position: relative;
+  min-width: 0;
+}
+
+.hero__media .photo { width: 100%; }
+
+/* Thin red rule tucked under the hero image, echoing the mark. */
+.hero__media::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 48%;
+  height: 3px;
+  background-color: var(--c-red);
+}
+
+/* --- Material strip along the base of the hero ----------------------------- */
+.hero__strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--s-5);
+  padding-block: var(--s-4);
+  border-top: 1px solid var(--line-invert);
+  font-size: var(--t-fine);
+  letter-spacing: 0.03em;
+  color: var(--text-invert-muted);
+}
+
+.hero__strip-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  padding-block: 2px;
+}
+
+/* The list gap falls to the left of the marker and the item gap to its right,
+   so the marker sits centred between two labels. */
+.hero__strip-item + .hero__strip-item::before {
+  content: '';
+  flex: none;
+  width: 4px;
+  height: 4px;
+  background-color: var(--accent-2-text);
+}
+
+@media (min-width: 860px) {
+  .hero__inner { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); }
+  .hero__media .photo { aspect-ratio: 4 / 5; }
+}
+
+@media (max-width: 859px) {
+  .hero__media .photo { aspect-ratio: 16 / 10; }
+}
+
+/* --- Problem ---------------------------------------------------------------- */
+.problem__inner {
+  display: grid;
+  gap: clamp(2rem, 1.2rem + 3.4vw, 4rem);
+  align-items: start;
+}
+
+.problem__media { min-width: 0; }
+
+.problem__text { min-width: 0; }
+
+.problem__text .sec-head { margin-bottom: var(--s-6); }
+
+.problem__text .sec-head__title { max-width: 16ch; }
+
+.problem__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
+  max-width: 54ch;
+}
+
+.problem__emphasis {
+  font-size: var(--t-lead);
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.014em;
+  padding-left: var(--s-5);
+  border-left: 2px solid var(--c-red);
+  margin-block: var(--s-2);
+}
+
+@media (min-width: 900px) {
+  .problem__inner { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .problem__media { position: sticky; top: calc(var(--header-h) + var(--s-6)); }
+}
+
+@media (max-width: 899px) {
+  .problem__media .photo { aspect-ratio: 16 / 10; }
+}
+
+/* --- Wales ------------------------------------------------------------------ */
+.wales-section {
+  border-top: 1px solid var(--line);
+}
+
+.wales-section__inner {
+  display: grid;
+  gap: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  align-items: center;
+}
+
+.wales-section__text { min-width: 0; }
+.wales-section__text .sec-head { margin-bottom: var(--s-5); }
+
+.wales-section__note {
+  font-size: var(--t-fine);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 46ch;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+}
+
+.wales-section__map {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .wales-section__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+/* --- Benefits ---------------------------------------------------------------- */
+.benefits {
+  display: grid;
+  gap: var(--s-6) var(--s-5);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 560px) {
+  .benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1040px) {
+  .benefits { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.benefit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line-strong);
+  min-width: 0;
+}
+
+.benefit__index {
+  font-size: var(--t-fine);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+  color: var(--accent-2-text);
+}
+
+.benefit__title {
+  font-size: var(--t-h4);
+  letter-spacing: -0.014em;
+}
+
+.benefit__body {
+  font-size: var(--t-small);
+  line-height: 1.58;
+  color: var(--text-muted);
+}
+
+/* --- Founding network band ---------------------------------------------------- */
+.founding {
+  background-color: var(--surface-sunken);
+  border-top: 1px solid var(--line);
+  padding-block: var(--section-y);
+}
+
+.founding__inner {
+  display: grid;
+  gap: clamp(2rem, 1.2rem + 3.4vw, 4rem);
+  align-items: center;
+}
+
+.founding__media { min-width: 0; }
+
+.founding__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.founding__title {
+  font-size: var(--t-h2);
+  letter-spacing: var(--ls-heading);
+  max-width: 14ch;
+}
+
+.founding__body {
+  font-size: var(--t-lead);
+  line-height: 1.5;
+  color: var(--text-muted);
+  max-width: 46ch;
+}
+
+.founding__actions { margin-top: var(--s-2); }
+
+.founding__note {
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 46ch;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 860px) {
+  .founding__inner { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
+}
+
+@media (max-width: 859px) {
+  .founding__media .photo { aspect-ratio: 16 / 10; }
+}

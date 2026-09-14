@@ -1,0 +1,68 @@
+.cta {
+  padding-block: var(--section-y);
+  position: relative;
+}
+
+.cta--light {
+  border-top: 1px solid var(--line);
+  background-color: var(--surface-sunken);
+}
+
+.cta--dark {
+  /* A single hairline of Welsh red across the top of the band. */
+  box-shadow: inset 0 3px 0 0 var(--c-red);
+}
+
+.cta__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-7);
+}
+
+.cta__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.cta__title {
+  font-size: var(--t-h2);
+  letter-spacing: var(--ls-heading);
+  max-width: 18ch;
+}
+
+.cta__body {
+  font-size: var(--t-lead);
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 52ch;
+}
+
+.cta__note {
+  margin-top: var(--s-4);
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  max-width: 48ch;
+}
+
+/* --- The closing statement -------------------------------------------------- */
+.cta--xl { padding-block: var(--section-y-lg); }
+
+.cta--xl .cta__title {
+  font-size: var(--t-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-display);
+  max-width: 16ch;
+}
+
+@media (min-width: 900px) {
+  .cta--md .cta__inner {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-9);
+  }
+
+  .cta--md .cta__content { flex: 1 1 34rem; }
+  .cta--md .cta__actions { flex: none; }
+}

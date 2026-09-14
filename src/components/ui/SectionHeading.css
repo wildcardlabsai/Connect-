@@ -1,0 +1,60 @@
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-size: var(--t-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.eyebrow__mark {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background-color: var(--c-red);
+}
+
+.sec-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  margin-bottom: var(--s-8);
+}
+
+.sec-head__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.sec-head__title {
+  max-width: 20ch;
+  letter-spacing: var(--ls-heading);
+}
+
+.sec-head__lead {
+  max-width: 58ch;
+  margin-top: var(--s-1);
+}
+
+.sec-head--center {
+  align-items: center;
+  text-align: center;
+}
+
+.sec-head--center .sec-head__main { align-items: center; }
+.sec-head--center .sec-head__title { max-width: 24ch; }
+
+@media (min-width: 860px) {
+  .sec-head--split {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-8);
+  }
+
+  .sec-head--split .sec-head__action { padding-bottom: 0.4rem; }
+}

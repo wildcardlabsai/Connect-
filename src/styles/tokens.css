@@ -1,0 +1,132 @@
+/* ==========================================================================
+   ConnectCymru design tokens
+   Colour, type, spacing and motion primitives. Everything else builds on this.
+   ========================================================================== */
+
+:root {
+  /* --- Brand palette ----------------------------------------------------- */
+  --c-ink: #171a1c;          /* Deep Charcoal  */
+  --c-paper: #f5f3ee;        /* Warm Off White */
+  --c-red: #c8102e;          /* Welsh Red      */
+  --c-orange: #d66a2c;       /* Industrial Orange */
+
+  /* --- Derived neutrals (warm, tuned off the charcoal) -------------------- */
+  --c-ink-800: #202427;
+  --c-ink-700: #2c3135;
+  --c-ink-600: #3c4347;
+  --c-ink-500: #5b6367;
+  --c-ink-400: #7d8589;
+  --c-paper-200: #ece8e0;
+  --c-paper-300: #ded9cf;
+  --c-paper-400: #c9c3b6;
+
+  /* --- Semantic surfaces -------------------------------------------------- */
+  --surface: var(--c-paper);
+  --surface-raised: #fbfaf7;
+  --surface-sunken: var(--c-paper-200);
+  --surface-invert: var(--c-ink);
+
+  --text: var(--c-ink);
+  --text-muted: var(--c-ink-500);
+  --text-invert: var(--c-paper);
+  --text-invert-muted: rgba(245, 243, 238, 0.66);
+
+  --line: rgba(23, 26, 28, 0.14);
+  --line-strong: rgba(23, 26, 28, 0.28);
+  --line-invert: rgba(245, 243, 238, 0.16);
+  --line-invert-strong: rgba(245, 243, 238, 0.34);
+
+  --accent: var(--c-red);
+  --accent-2: var(--c-orange);
+  /* Industrial Orange is only 3.2:1 on the off-white ground, so small orange
+     TEXT uses this deeper mix instead. The brand orange stays as-is for marks,
+     rules and anything on charcoal. */
+  --accent-2-text: #aa4e15;
+
+  /* --- Typography --------------------------------------------------------- */
+  --font-sans: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Editorial display scale. Fluid between 380px and 1280px viewports. */
+  --t-display: clamp(2.75rem, 1.35rem + 5.9vw, 6rem);
+  --t-h1: clamp(2.25rem, 1.3rem + 4vw, 4.25rem);
+  --t-h2: clamp(1.875rem, 1.25rem + 2.6vw, 3.125rem);
+  --t-h3: clamp(1.375rem, 1.1rem + 1.15vw, 1.9375rem);
+  --t-h4: clamp(1.125rem, 1.02rem + 0.45vw, 1.375rem);
+  --t-lead: clamp(1.0625rem, 0.98rem + 0.42vw, 1.3125rem);
+  --t-body: 1rem;
+  --t-small: 0.9375rem;
+  --t-fine: 0.8125rem;
+  --t-eyebrow: 0.6875rem;
+
+  --lh-display: 0.96;
+  --lh-tight: 1.06;
+  --lh-heading: 1.14;
+  --lh-body: 1.62;
+
+  --ls-display: -0.032em;
+  --ls-heading: -0.02em;
+  --ls-eyebrow: 0.17em;
+
+  /* --- Space (4px base, editorial rhythm) --------------------------------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 2.5rem;
+  --s-8: 3rem;
+  --s-9: 4rem;
+  --s-10: 5rem;
+  --s-11: 6.5rem;
+  --s-12: 8rem;
+
+  /* Vertical rhythm for full-bleed page sections. */
+  --section-y: clamp(4rem, 2.4rem + 6.4vw, 7.5rem);
+  --section-y-lg: clamp(5rem, 2.6rem + 9vw, 10rem);
+
+  /* --- Layout -------------------------------------------------------------- */
+  --container: 78rem;      /* 1248px */
+  --container-narrow: 56rem;
+  --container-text: 42rem;
+  --gutter: clamp(1.25rem, 0.6rem + 2.6vw, 3rem);
+
+  --header-h: 68px;
+  --launchbar-h: 40px;
+
+  /* --- Form / control geometry -------------------------------------------- */
+  --radius: 3px;           /* deliberately near-square, not pill-shaped */
+  --radius-lg: 4px;
+  --control-h: 46px;
+
+  /* --- Motion --------------------------------------------------------------
+     Short, deliberate easing. Nothing bouncy, nothing decorative.            */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --d-fast: 140ms;
+  --d-base: 240ms;
+  --d-slow: 620ms;
+
+  --focus-ring: 2px solid var(--c-red);
+  --focus-offset: 2px;
+
+  --z-header: 100;
+  --z-menu: 200;
+}
+
+/* Inverted context: any block painted charcoal flips the semantic tokens so
+   nested components need no special-casing. */
+.is-inverted {
+  --surface: var(--c-ink);
+  --surface-raised: var(--c-ink-800);
+  --surface-sunken: #101315;
+  --text: var(--c-paper);
+  --text-muted: var(--text-invert-muted);
+  --line: var(--line-invert);
+  --line-strong: var(--line-invert-strong);
+  /* On charcoal the brand orange clears 4.9:1, so text goes back to it. */
+  --accent-2-text: var(--c-orange);
+  color: var(--text);
+  background-color: var(--surface);
+}

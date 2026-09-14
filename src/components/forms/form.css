@@ -1,0 +1,274 @@
+/* ==========================================================================
+   Form controls
+   ========================================================================== */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.form__grid {
+  display: grid;
+  gap: var(--s-5);
+}
+
+@media (min-width: 640px) {
+  .form__grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+}
+
+.field--group {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.field__label {
+  font-size: var(--t-fine);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  padding: 0;
+}
+
+.field__optional {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.field__hint {
+  font-size: var(--t-fine);
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: calc(var(--s-1) * -1);
+}
+
+.field__control {
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 0.6rem var(--s-4);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  transition:
+    border-color var(--d-fast) var(--ease),
+    box-shadow var(--d-fast) var(--ease),
+    background-color var(--d-fast) var(--ease);
+}
+
+.field__control::placeholder { color: #6c7478; }
+
+.field__control:hover { border-color: var(--text-muted); }
+
+.field__control:focus-visible {
+  outline: none;
+  border-color: var(--c-ink);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--c-ink) 22%, transparent);
+  background-color: #fff;
+}
+
+.field__control--area {
+  min-height: 8rem;
+  resize: vertical;
+  padding-block: var(--s-3);
+}
+
+.field--invalid .field__control { border-color: var(--c-red); }
+
+.field--invalid .field__control:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--c-red) 28%, transparent);
+}
+
+.field__error {
+  display: flex;
+  gap: 0.5em;
+  font-size: var(--t-fine);
+  font-weight: 500;
+  color: var(--c-red);
+  line-height: 1.45;
+}
+
+.field__error::before {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin-top: 0.55em;
+  background-color: var(--c-red);
+}
+
+/* --- Select ----------------------------------------------------------------- */
+.field__select-wrap { position: relative; }
+
+.field__control--select {
+  appearance: none;
+  padding-right: var(--s-8);
+  cursor: pointer;
+}
+
+.field__chevron {
+  position: absolute;
+  right: var(--s-4);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-muted);
+}
+
+/* --- Radios ------------------------------------------------------------------ */
+.radio-grid {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-1);
+}
+
+@media (min-width: 560px) {
+  .radio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.radio {
+  position: relative;
+  min-width: 0;
+}
+
+/* Visually hidden but still focusable, so the label drives the interaction
+   while keyboard users keep a real radio to tab to. */
+.radio__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.radio__label {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0.75rem var(--s-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background-color: var(--surface-raised);
+  font-size: var(--t-small);
+  cursor: pointer;
+  transition:
+    border-color var(--d-fast) var(--ease),
+    background-color var(--d-fast) var(--ease);
+}
+
+.radio__label:hover { border-color: var(--text-muted); }
+
+.radio__box {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line-strong);
+  background-color: #fff;
+  transition: border-color var(--d-fast) var(--ease), box-shadow var(--d-fast) var(--ease);
+}
+
+.radio__input:checked + .radio__label {
+  border-color: var(--c-ink);
+  background-color: var(--surface-sunken);
+}
+
+.radio__input:checked + .radio__label .radio__box {
+  border-color: var(--c-red);
+  box-shadow: inset 0 0 0 3px var(--c-red);
+}
+
+.radio__input:focus-visible + .radio__label {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* --- Submission state --------------------------------------------------------- */
+.form__foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding-top: var(--s-2);
+}
+
+.form__privacy {
+  font-size: var(--t-fine);
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 52ch;
+}
+
+.form__alert {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--c-red);
+  border-radius: var(--radius);
+  background-color: color-mix(in srgb, var(--c-red) 6%, transparent);
+  font-size: var(--t-small);
+  color: var(--text);
+}
+
+/* --- Success state -------------------------------------------------------------- */
+.form-success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-4);
+  padding: var(--s-7) var(--s-6);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--c-red);
+  border-radius: var(--radius);
+  background-color: var(--surface-raised);
+  animation: success-in 420ms var(--ease-out) both;
+}
+
+@keyframes success-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.form-success__title {
+  font-size: var(--t-h3);
+  letter-spacing: var(--ls-heading);
+}
+
+.form-success__body {
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 52ch;
+}
+
+.form-success__meta {
+  font-size: var(--t-fine);
+  color: var(--text-muted);
+  padding-top: var(--s-4);
+  margin-top: var(--s-2);
+  border-top: 1px solid var(--line);
+  width: 100%;
+  max-width: 52ch;
+}
+
+.form-success__check {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--c-red);
+  border-radius: var(--radius);
+  color: var(--c-red);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-success { animation: none; }
+}
