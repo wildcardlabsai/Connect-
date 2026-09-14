@@ -4,25 +4,59 @@
    Every photograph on the site is referenced from this one file. Nothing else
    hard-codes an image URL.
 
-   The `src` values below are DEVELOPMENT PLACEHOLDERS pointing at Unsplash.
-   To move to licensed or commissioned photography:
+   HOW TO ADD YOUR OWN PHOTOGRAPHY (no code changes needed)
+   --------------------------------------------------------------------------
+   Save a photograph into `public/images/` using the `file` name listed against
+   each entry below, for example `public/images/timber-yard.jpg`. That is the
+   whole job. The site loads the local file if it is there and falls back to
+   the remote placeholder if it is not, so you can add photographs one at a
+   time and see each one appear.
 
-     1. Drop the files into `public/images/`.
-     2. Change the `src` of each entry to `/images/<filename>`.
+   `public/images/README.md` lists every filename and what each shot needs to
+   show. Update the `alt` text here when you swap a photograph, so it still
+   describes the picture people are actually looking at.
 
-   Nothing else in the codebase needs to change. Every entry also carries a
-   `tone` pair, used to paint a considered two-colour panel behind the image
-   while it loads and in place of it if the file is ever missing, so a broken
-   or slow image never leaves an empty hole in the layout.
+   ABOUT THE PLACEHOLDERS
+   --------------------------------------------------------------------------
+   The `placeholder` URLs point at Unsplash. They were written without network
+   access to verify them, so treat them as unconfirmed: some may not resolve,
+   and any that do may not show the subject described in `alt`. They exist so
+   the site is not empty before real photography arrives, not as a final asset
+   choice.
+
+   Each entry also carries a `tone` pair. It paints a considered two-colour
+   panel behind the image, so a slow, missing or unreplaced picture never
+   leaves a hole in the layout.
    ========================================================================== */
 
 export type Media = {
-  src: string;
+  /** Filename to look for in `public/images`. Tried first. */
+  file: string;
+  /** Unconfirmed remote stand-in, used only until the local file exists. */
+  placeholder?: string;
   /** Meaningful alternative text. Never leave this empty for content images. */
   alt: string;
   /** [shadow, highlight] used for the loading / fallback panel. */
   tone: [string, string];
 };
+
+/** Where local photography lives, relative to the deployed base path. */
+const LOCAL_DIR = 'images';
+
+/**
+ * The sources to try for an image, in order: the local file first, then the
+ * remote placeholder. `BASE_URL` keeps this correct when the site is served
+ * from a subdirectory.
+ */
+export function sourcesFor(media: Media): string[] {
+  const base = import.meta.env.BASE_URL.endsWith('/')
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`;
+
+  return [`${base}${LOCAL_DIR}/${media.file}`, media.placeholder].filter(
+    (source): source is string => Boolean(source),
+  );
+}
 
 const UNSPLASH = 'https://images.unsplash.com';
 
@@ -33,62 +67,74 @@ function ph(id: string, w = 1600): string {
 
 export const media = {
   heroWorkshop: {
-    src: ph('photo-1565043666747-69f6646db940', 2000),
+    file: 'hero-workshop.jpg',
+    placeholder: ph('photo-1565043666747-69f6646db940', 2000),
     alt: 'Interior of a working manufacturing unit, with machinery and stacked stock under industrial roof lights.',
     tone: ['#23262a', '#4a4f54'],
   },
   fabrication: {
-    src: ph('photo-1504328345606-18bbc8c9d7d1', 1400),
+    file: 'fabrication.jpg',
+    placeholder: ph('photo-1504328345606-18bbc8c9d7d1', 1400),
     alt: 'A fabricator working at a bench in a metal workshop.',
     tone: ['#1d2124', '#44494d'],
   },
   timberYard: {
-    src: ph('photo-1516937941344-00b4e0337589', 1400),
+    file: 'timber-yard.jpg',
+    placeholder: ph('photo-1516937941344-00b4e0337589', 1400),
     alt: 'Sawn timber boards stacked and banded in a timber yard.',
     tone: ['#3a2a1c', '#8a6338'],
   },
   metalStock: {
-    src: ph('photo-1581091226825-a6a2a5aee158', 1400),
+    file: 'metal-stock.jpg',
+    placeholder: ph('photo-1581091226825-a6a2a5aee158', 1400),
     alt: 'Sheet metal and steel sections racked in a fabrication workshop.',
     tone: ['#25292d', '#5d666c'],
   },
   plasticsStock: {
-    src: ph('photo-1581093458791-9f3c3900df4b', 1400),
+    file: 'plastics-stock.jpg',
+    placeholder: ph('photo-1581093458791-9f3c3900df4b', 1400),
     alt: 'Moulded plastic components collected in stillages beside a production line.',
     tone: ['#1b2a2e', '#3f6d75'],
   },
   textiles: {
-    src: ph('photo-1558769132-cb1aea458c5e', 1400),
+    file: 'textiles.jpg',
+    placeholder: ph('photo-1558769132-cb1aea458c5e', 1400),
     alt: 'Rolls of fabric stacked on shelving in a textile production unit.',
     tone: ['#2c2026', '#6d4a56'],
   },
   packaging: {
-    src: ph('photo-1607344645866-009c320c5ab8', 1400),
+    file: 'packaging.jpg',
+    placeholder: ph('photo-1607344645866-009c320c5ab8', 1400),
     alt: 'Flattened cardboard and packaging materials baled and stacked in a warehouse.',
     tone: ['#332a1e', '#7d6540'],
   },
   manufacturingSurplus: {
-    src: ph('photo-1517048676732-d65bc937f952', 1400),
+    file: 'manufacturing-surplus.jpg',
+    placeholder: ph('photo-1517048676732-d65bc937f952', 1400),
     alt: 'Offcuts and part-used production materials collected at the end of a manufacturing line.',
     tone: ['#26282a', '#565c60'],
   },
   warehouseAisle: {
-    src: ph('photo-1553413077-190dd305871c', 1600),
+    file: 'warehouse-aisle.jpg',
+    placeholder: ph('photo-1553413077-190dd305871c', 1600),
     alt: 'Palletised stock racked in a distribution warehouse.',
     tone: ['#22262a', '#4f575d'],
   },
   productionLine: {
-    src: ph('photo-1581092160562-40aa08e78837', 1600),
+    file: 'production-line.jpg',
+    placeholder: ph('photo-1581092160562-40aa08e78837', 1600),
     alt: 'An operator checking parts part-way along a production line.',
     tone: ['#1f2326', '#4b5257'],
   },
   joinery: {
-    src: ph('photo-1572981779307-38b8cabb2407', 1400),
+    file: 'joinery.jpg',
+    placeholder: ph('photo-1572981779307-38b8cabb2407', 1400),
     alt: 'A joiner cutting board material in a woodworking workshop.',
     tone: ['#38281a', '#8b6640'],
   },
   palletStack: {
-    src: ph('photo-1587293852726-70cdb56c2866', 1400),
+    file: 'pallet-stack.jpg',
+    placeholder: ph('photo-1587293852726-70cdb56c2866', 1400),
     alt: 'Wooden pallets stacked against the wall of a loading bay.',
     tone: ['#342a1d', '#856a42'],
   },

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
+import { sourcesFor } from '../../data/media';
 import type { Media } from '../../data/media';
 import './Photo.css';
 
@@ -19,11 +20,11 @@ type PhotoProps = {
 /**
  * Every photograph on the site goes through this component.
  *
- * A two-tone panel derived from the image's own `tone` pair is painted in the
- * box first, so the layout is never empty: the photograph fades in over it
- * once decoded, and if the file fails to load the panel simply stays. That
- * keeps the page intact when an image is slow, blocked or not yet replaced
- * with a licensed asset.
+ * It walks a list of sources in order and shows the first that loads: the
+ * local file in `public/images` if one has been added, then the remote
+ * placeholder, and finally nothing. A two-tone panel built from the image's
+ * own `tone` pair is painted in the box underneath throughout, so the layout
+ * holds while sources are tried and stays intact if none of them resolve.
  */
 export function Photo({
   media,
@@ -33,7 +34,11 @@ export function Photo({
   scrim = 'none',
   className,
 }: PhotoProps) {
-  const [state, setState] = useState<'loading' | 'loaded' | 'failed'>('loading');
+  const sources = sourcesFor(media);
+  const [index, setIndex] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+
+  const exhausted = index >= sources.length;
 
   return (
     <div
@@ -41,7 +46,7 @@ export function Photo({
         'photo',
         zoom ? 'photo--zoom' : '',
         scrim !== 'none' ? `photo--scrim-${scrim}` : '',
-        `is-${state}`,
+        loaded ? 'is-loaded' : 'is-pending',
         className,
       ]
         .filter(Boolean)
@@ -54,16 +59,20 @@ export function Photo({
         } as CSSProperties
       }
     >
-      <img
-        className="photo__img"
-        src={media.src}
-        alt={media.alt}
-        loading={priority ? 'eager' : 'lazy'}
-        decoding={priority ? 'sync' : 'async'}
-        fetchPriority={priority ? 'high' : 'auto'}
-        onLoad={() => setState('loaded')}
-        onError={() => setState('failed')}
-      />
+      {exhausted ? null : (
+        <img
+          /* Keying on the source restarts decoding cleanly when we fall back. */
+          key={sources[index]}
+          className="photo__img"
+          src={sources[index]}
+          alt={media.alt}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding={priority ? 'sync' : 'async'}
+          fetchPriority={priority ? 'high' : 'auto'}
+          onLoad={() => setLoaded(true)}
+          onError={() => setIndex((current) => current + 1)}
+        />
+      )}
     </div>
   );
 }
