@@ -1,0 +1,25 @@
+.browse-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-bottom: var(--s-6);
+}
+
+.browse-filters__chip {
+  padding: 0.5em 1em;
+  font-size: var(--t-fine);
+  font-weight: 550;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--text);
+  background-color: transparent;
+  transition: background-color var(--d-fast) var(--ease), color var(--d-fast) var(--ease);
+}
+
+.browse-filters__chip:hover { border-color: var(--c-ink); }
+
+.browse-filters__chip.is-active {
+  background-color: var(--c-ink);
+  color: var(--c-paper);
+  border-color: var(--c-ink);
+}

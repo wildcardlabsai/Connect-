@@ -1,18 +1,28 @@
 # ConnectCymru
 
-Marketing site for ConnectCymru, a Welsh B2B network being built to connect businesses
-that have surplus materials with businesses that can use them.
+ConnectCymru is a Welsh B2B network connecting businesses that have surplus materials with
+businesses that can use them.
 
 **Connecting Welsh industry.**
 
-The platform itself is not live. This site positions ConnectCymru as launching soon and
-exists to build a founding network of Welsh businesses ahead of launch.
+This repository is two things in one:
+
+1. A marketing site (`/`, `/how-it-works`, `/for-businesses`, `/materials`, `/about`,
+   `/founding-network`, `/contact`) that positions ConnectCymru as launching soon.
+2. The platform itself: accounts, listings, requirements, matching, messaging and an admin
+   panel, behind `/login`, `/signup`, `/browse`, `/app` and `/admin`.
+
+The platform runs on Supabase and **does nothing until you connect one** — see
+[`supabase/README.md`](supabase/README.md) for the ten-minute setup. Until then, those
+routes show a plain "not connected yet" message rather than crashing, and the marketing
+site works exactly as before.
 
 ## Stack
 
 - React 19 + TypeScript
 - Vite 8
 - React Router 7
+- Supabase (Postgres, auth, storage) for the platform — see `supabase/README.md`
 - Hand-written CSS with design tokens (no UI framework)
 - Inter, self-hosted via `@fontsource-variable/inter` (no third-party font requests)
 
@@ -42,6 +52,10 @@ The site is a single-page app with real routes, so any host must rewrite unknown
 | `/about` | About |
 | `/founding-network` | Founding Network (interest form) |
 | `/contact` | Contact (enquiry form) |
+| `/login`, `/signup` | Sign in / create a business account |
+| `/browse`, `/browse/:id` | Browse active listings (signed in) |
+| `/app`, `/app/listings`, `/app/requirements`, `/app/matches`, `/app/messages`, `/app/settings` | Business dashboard (signed in) |
+| `/admin`, `/admin/listings`, `/admin/requirements`, `/admin/businesses`, `/admin/enquiries` | Admin panel (admin role) |
 | anything else | 404 |
 
 ## Structure
@@ -56,10 +70,24 @@ src/
     sections/  CtaSection, SplitSection
     forms/     Fields, InterestForm, ContactForm, FormSuccess
     map/       WalesMap
+    app/       AppShell, DashboardLayout, AdminLayout (the platform's own chrome)
   data/        All site content: materials, stages, benefits, nav, media, wales
-  lib/         seo, validation, submitEnquiry, useInView
-  pages/       One file per route
+  lib/
+    api/       One file per domain: listings, requirements, matches, messages, admin, enquiries
+    auth.tsx   AuthProvider + useAuth
+    guards.tsx RequireSupabase, RequireAuth, RequireAdmin
+    supabase.ts  the Supabase client
+    seo, validation, submitEnquiry, useInView
+  pages/
+    auth/      Login, SignUp
+    app/       The business dashboard
+    admin/     The admin panel
+    (root)     The marketing pages, one file per route
   styles/      tokens.css, base.css
+
+supabase/
+  migrations/0001_init.sql   the entire schema, RLS policies and storage bucket
+  README.md                  setup steps: create a project, run the migration, connect it
 ```
 
 Page copy and lists live in `src/data/`. Components take that data as props, so text can be
@@ -80,25 +108,15 @@ Nothing else changes. Each entry also carries a `tone` pair used to paint a cons
 two-colour panel behind the image, so a slow or missing file never leaves a hole in the
 layout. Keep the `alt` text accurate when you swap a photograph.
 
-### 2. Forms
+### 2. The platform itself
 
-Both forms currently simulate a successful submission in the browser. **Nothing is sent and
-nothing is stored.** All of that behaviour lives in one file,
-**`src/lib/submitEnquiry.ts`**.
+Connect Supabase (see [`supabase/README.md`](supabase/README.md)) and the founding network
+and contact forms automatically start writing to the real `enquiries` table instead of
+simulating success — no code change needed, that switch lives in `src/lib/submitEnquiry.ts`.
 
-To connect a real backend or hosted form service, set one environment variable:
-
-```bash
-# .env
-VITE_ENQUIRY_ENDPOINT=https://your-endpoint.example/api/enquiries
-```
-
-When it is set, the payload is POSTed there as JSON and the real response decides whether
-the success or error state is shown. See `.env.example`. Adjust the request body in
-`submitEnquiry.ts` if your service expects a different shape.
-
-The success states name the frontend-only caveat on screen. Remove that line from
-`InterestForm.tsx` and `ContactForm.tsx` once submissions actually go somewhere.
+Without Supabase configured, and without `VITE_ENQUIRY_ENDPOINT` set either, both forms
+still work exactly as before: they simulate a successful submission in the browser and say
+so on screen. See `.env.example` for both variables.
 
 ## Brand
 
@@ -133,9 +151,20 @@ not represent businesses, listings, users or activity, and the page says so.
 
 ## What is deliberately not here
 
-No backend, no authentication, no database, no marketplace activity, no analytics, and no
-invented statistics, testimonials, customer logos, company names, partnerships or
-endorsements. No contact details are published, because none have been provided.
+No fake backend, no fake authentication, no fake marketplace activity — the accounts,
+listings, requirements, matches and messages are real once Supabase is connected, and
+entirely absent (not simulated) until then. No analytics, and no invented statistics,
+testimonials, customer logos, company names, partnerships or endorsements. No contact
+details are published, because none have been provided.
+
+## Matching, and what it doesn't decide
+
+`refresh_matches()` in the migration recomputes suggested matches whenever a listing or
+requirement changes. It checks category and, loosely, location — nothing more. It does not
+know about material grade, condition, quantity fit, or any regulatory requirement. The site
+says so throughout (How It Works, Materials, every listing page): a match is a prompt to
+look properly, not an approval, and the two businesses stay responsible for confirming
+suitability themselves.
 
 ## Accessibility
 

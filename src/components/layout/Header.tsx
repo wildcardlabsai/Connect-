@@ -4,9 +4,12 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Logo } from '../brand/Logo';
 import { Button } from '../ui/Button';
 import { JOIN_LABEL, JOIN_PATH, primaryNav } from '../../data/nav';
+import { useAuth } from '../../lib/auth';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import './Header.css';
 
 export function Header() {
+  const { user, isAdmin, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(() => window.scrollY > 8);
   const { pathname } = useLocation();
@@ -99,9 +102,38 @@ export function Header() {
         </nav>
 
         <div className="header__actions">
-          <Button to={JOIN_PATH} variant="accent" size="sm" className="header__cta">
-            {JOIN_LABEL}
-          </Button>
+          {isSupabaseConfigured ? (
+            <Button to="/browse" variant="link" size="sm" className="header__cta">
+              Browse
+            </Button>
+          ) : null}
+
+          {isSupabaseConfigured && user ? (
+            <>
+              {isAdmin ? (
+                <Button to="/admin" variant="outline" size="sm" className="header__cta">
+                  Admin
+                </Button>
+              ) : null}
+              <Button to="/app" variant="solid" size="sm" className="header__cta">
+                Dashboard
+              </Button>
+              <Button variant="link" size="sm" className="header__cta" onClick={() => signOut()}>
+                Sign out
+              </Button>
+            </>
+          ) : (
+            <>
+              {isSupabaseConfigured ? (
+                <Button to="/login" variant="link" size="sm" className="header__cta">
+                  Log in
+                </Button>
+              ) : null}
+              <Button to={JOIN_PATH} variant="accent" size="sm" className="header__cta">
+                {JOIN_LABEL}
+              </Button>
+            </>
+          )}
 
           <button
             ref={toggleRef}
@@ -144,10 +176,44 @@ export function Header() {
                 </NavLink>
               </li>
             ))}
+            {isSupabaseConfigured ? (
+              <li style={{ '--i': primaryNav.length } as CSSProperties}>
+                <NavLink
+                  to="/browse"
+                  className={({ isActive }) => `header__menu-link${isActive ? ' is-active' : ''}`}
+                >
+                  Browse
+                </NavLink>
+              </li>
+            ) : null}
           </ul>
-          <Button to={JOIN_PATH} variant="accent" size="lg" fullWidth arrow>
-            {JOIN_LABEL}
-          </Button>
+
+          {isSupabaseConfigured && user ? (
+            <div className="header__menu-actions">
+              {isAdmin ? (
+                <Button to="/admin" variant="outline" size="lg" fullWidth>
+                  Admin
+                </Button>
+              ) : null}
+              <Button to="/app" variant="accent" size="lg" fullWidth arrow>
+                Dashboard
+              </Button>
+              <Button variant="outline" size="lg" fullWidth onClick={() => signOut()}>
+                Sign out
+              </Button>
+            </div>
+          ) : (
+            <div className="header__menu-actions">
+              {isSupabaseConfigured ? (
+                <Button to="/login" variant="outline" size="lg" fullWidth>
+                  Log in
+                </Button>
+              ) : null}
+              <Button to={JOIN_PATH} variant="accent" size="lg" fullWidth arrow>
+                {JOIN_LABEL}
+              </Button>
+            </div>
+          )}
         </nav>
       </div>
     </header>

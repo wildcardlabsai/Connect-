@@ -1,0 +1,54 @@
+.thread {
+  display: flex;
+  flex-direction: column;
+  height: min(60vh, 40rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background-color: var(--surface-raised);
+}
+
+.thread__messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.thread__bubble {
+  max-width: 32rem;
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--radius);
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+
+.thread__bubble time {
+  display: block;
+  margin-top: var(--s-1);
+  font-size: var(--t-fine);
+  opacity: 0.65;
+}
+
+.thread__bubble.is-other {
+  align-self: flex-start;
+  background-color: var(--surface-sunken);
+  color: var(--text);
+}
+
+.thread__bubble.is-own {
+  align-self: flex-end;
+  background-color: var(--c-ink);
+  color: var(--c-paper);
+}
+
+.thread__composer {
+  display: flex;
+  gap: var(--s-3);
+  align-items: flex-end;
+  padding: var(--s-4);
+  border-top: 1px solid var(--line);
+}
+
+.thread__composer textarea { flex: 1; }

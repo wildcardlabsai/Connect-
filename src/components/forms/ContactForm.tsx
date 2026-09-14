@@ -3,6 +3,7 @@ import { Button } from '../ui/Button';
 import { TextAreaField, TextField } from './Fields';
 import { FormSuccess } from './FormSuccess';
 import { submitEnquiry } from '../../lib/submitEnquiry';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import { compact, requiredEmail, requiredText } from '../../lib/validation';
 import type { Errors } from '../../lib/validation';
 import './form.css';
@@ -10,6 +11,13 @@ import './form.css';
 type FieldName = 'name' | 'company' | 'email' | 'message';
 
 const EMPTY: Record<FieldName, string> = { name: '', company: '', email: '', message: '' };
+
+/** Real submissions once Supabase is configured; otherwise this is honest
+    about the form being a local simulation. */
+const backendMeta = isSupabaseConfigured
+  ? undefined
+  : 'This site is not connected to a backend yet, so your enquiry has not been stored or sent anywhere.';
+
 
 export function ContactForm() {
   const [values, setValues] = useState(EMPTY);
@@ -57,7 +65,7 @@ export function ContactForm() {
     return (
       <FormSuccess
         title="Enquiry received."
-        meta="This site is not connected to a backend yet, so your enquiry has not been stored or sent anywhere."
+        meta={backendMeta}
       >
         Thanks for getting in touch. We read everything that comes in and will reply as
         soon as we can.

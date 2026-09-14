@@ -1,25 +1,27 @@
 /* ==========================================================================
    Enquiry submission
    --------------------------------------------------------------------------
-   THIS IS THE ONLY PLACE THE SITE SENDS A FORM ANYWHERE.
+   THIS IS THE ONLY PLACE THE FOUNDING NETWORK AND CONTACT FORMS SEND DATA.
 
-   The site is frontend only at this stage, so by default this function does
-   not transmit anything. It waits briefly and reports success, which lets the
-   success states be built and reviewed without a backend behind them. Nothing
-   is stored, and no data leaves the browser.
+   Three ways this can behave, tried in order:
 
-   To connect a real backend or a hosted form service:
-
-     1. Set VITE_ENQUIRY_ENDPOINT in your environment (see .env.example).
-     2. That is it. When the variable is present the payload below is POSTed
-        as JSON to that URL and the real response decides the outcome.
-
-   Adjust `body` here if the service you choose expects a different shape.
+     1. Supabase configured (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY set):
+        the submission is written to the `enquiries` table for real, and
+        shows up in the admin panel under Enquiries.
+     2. VITE_ENQUIRY_ENDPOINT set instead: POSTed there as JSON, for a
+        different backend or a hosted form service.
+     3. Neither set: simulates success locally after a short delay. Nothing
+        is stored and nothing leaves the browser. This is the state the site
+        ships in before either is configured.
    ========================================================================== */
+
+import { isSupabaseConfigured } from './supabase';
+import { submitEnquiryToDb } from './api/enquiries';
+import type { EnquiryForm } from './database.types';
 
 export type EnquiryPayload = {
   /** Which form the submission came from. */
-  formName: 'founding-network' | 'contact';
+  formName: EnquiryForm;
   fields: Record<string, string>;
 };
 
@@ -33,10 +35,30 @@ const GENERIC_ERROR =
   'Something went wrong sending your details. Please try again in a moment.';
 
 export async function submitEnquiry(payload: EnquiryPayload): Promise<SubmitResult> {
+  if (isSupabaseConfigured) {
+    try {
+      const f = payload.fields;
+      await submitEnquiryToDb({
+        formName: payload.formName,
+        name: f.name ?? '',
+        company: f.company,
+        email: f.email ?? '',
+        location: f.location,
+        industry: f.industry,
+        interest: f.interest,
+        message: f.message,
+      });
+      return { ok: true };
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('[ConnectCymru] enquiry insert failed:', error);
+      return { ok: false, message: GENERIC_ERROR };
+    }
+  }
+
   const endpoint = import.meta.env.VITE_ENQUIRY_ENDPOINT as string | undefined;
 
   if (!endpoint) {
-    // Frontend-only placeholder. Replace by setting VITE_ENQUIRY_ENDPOINT.
+    // Frontend-only placeholder. Configure Supabase or VITE_ENQUIRY_ENDPOINT.
     if (import.meta.env.DEV) {
       console.info('[ConnectCymru] Simulated submission, nothing was sent:', payload);
     }

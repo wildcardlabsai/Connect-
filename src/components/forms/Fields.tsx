@@ -66,7 +66,7 @@ export function TextField({
   autoComplete,
   placeholder,
   type = 'text',
-}: BaseProps & { type?: 'text' | 'email' }) {
+}: BaseProps & { type?: 'text' | 'email' | 'password' }) {
   const id = useId();
   const hintId = `${id}-hint`;
   const errorId = `${id}-error`;

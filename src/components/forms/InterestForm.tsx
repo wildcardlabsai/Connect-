@@ -3,6 +3,7 @@ import { Button } from '../ui/Button';
 import { RadioGroup, SelectField, TextAreaField, TextField } from './Fields';
 import { FormSuccess } from './FormSuccess';
 import { submitEnquiry } from '../../lib/submitEnquiry';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import { compact, requiredEmail, requiredText } from '../../lib/validation';
 import type { Errors } from '../../lib/validation';
 import './form.css';
@@ -40,6 +41,13 @@ const EMPTY: Record<FieldName, string> = {
   interest: '',
   message: '',
 };
+
+/** Real submissions once Supabase is configured; otherwise this is honest
+    about the form being a local simulation. */
+const backendMeta = isSupabaseConfigured
+  ? undefined
+  : 'This site is not connected to a backend yet, so your details have not been stored or sent anywhere.';
+
 
 export function InterestForm() {
   const [values, setValues] = useState(EMPTY);
@@ -96,7 +104,7 @@ export function InterestForm() {
     return (
       <FormSuccess
         title="Thank you. You are on the list."
-        meta="This site is not connected to a backend yet, so your details have not been stored or sent anywhere."
+        meta={backendMeta}
       >
         We have your interest in the ConnectCymru founding network. We will be in touch as
         the platform takes shape, and we may come back to you with a few questions about

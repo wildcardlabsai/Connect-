@@ -1,0 +1,152 @@
+.app-shell { padding-bottom: var(--section-y); }
+
+.app-shell__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: clamp(2rem, 1.3rem + 2.6vw, 3rem);
+  padding-bottom: var(--s-6);
+}
+
+.app-shell__title {
+  font-size: var(--t-h2);
+  letter-spacing: var(--ls-heading);
+}
+
+.app-shell__subtitle {
+  margin-top: var(--s-2);
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  max-width: 52ch;
+}
+
+.app-shell__nav-wrap { border-block: 1px solid var(--line); }
+
+.app-shell__nav {
+  display: flex;
+  gap: var(--s-6);
+  overflow-x: auto;
+}
+
+.app-shell__tab {
+  padding-block: var(--s-4);
+  font-size: var(--t-small);
+  font-weight: 550;
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color var(--d-fast) var(--ease), border-color var(--d-fast) var(--ease);
+}
+
+.app-shell__tab:hover { color: var(--text); }
+
+.app-shell__tab.is-active {
+  color: var(--text);
+  border-bottom-color: var(--c-red);
+}
+
+.app-shell__body { padding-top: var(--s-8); }
+
+/* --- Shared bits used across dashboard/admin pages ------------------------- */
+.app-empty {
+  padding: var(--s-8) var(--s-6);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.app-empty p { max-width: 42ch; margin-inline: auto; }
+.app-empty .btn-row { justify-content: center; margin-top: var(--s-5); }
+
+.app-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.app-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-4);
+  align-items: center;
+  padding-block: var(--s-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.app-row__main { min-width: 0; }
+
+.app-row__title {
+  font-size: var(--t-body);
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  margin-bottom: var(--s-1);
+}
+
+.app-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  font-size: var(--t-fine);
+  color: var(--text-muted);
+}
+
+.app-row__actions {
+  display: flex;
+  gap: var(--s-2);
+  flex: none;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.2em 0.6em;
+  font-size: var(--t-fine);
+  font-weight: 550;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.badge--active { color: #1a6b3c; border-color: #1a6b3c; }
+.badge--draft { color: var(--text-muted); }
+.badge--archived,
+.badge--closed,
+.badge--paused { color: var(--c-orange); border-color: var(--c-orange); }
+.badge--removed { color: var(--c-red); border-color: var(--c-red); }
+
+.stat-grid {
+  display: grid;
+  gap: var(--s-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  margin-bottom: var(--s-8);
+}
+
+.stat-tile {
+  padding-top: var(--s-3);
+  border-top: 2px solid var(--c-ink);
+}
+
+.stat-tile__value {
+  font-size: var(--t-h1);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.stat-tile__label {
+  margin-top: var(--s-2);
+  font-size: var(--t-fine);
+  color: var(--text-muted);
+}
+
+@media (min-width: 640px) {
+  .app-row { grid-template-columns: 1fr auto; }
+}

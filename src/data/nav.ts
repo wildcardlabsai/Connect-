@@ -9,11 +9,12 @@ export const primaryNav: NavItem[] = [
   { label: 'Contact', to: '/contact' },
 ];
 
-/** Footer navigation adds the founding network page to the primary set. */
+/** Footer navigation adds the founding network and browse pages to the primary set. */
 export const footerNav: NavItem[] = [
   { label: 'How It Works', to: '/how-it-works' },
   { label: 'For Businesses', to: '/for-businesses' },
   { label: 'Materials', to: '/materials' },
+  { label: 'Browse Listings', to: '/browse' },
   { label: 'About', to: '/about' },
   { label: 'Founding Network', to: '/founding-network' },
   { label: 'Contact', to: '/contact' },
