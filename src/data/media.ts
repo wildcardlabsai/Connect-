@@ -93,31 +93,31 @@ export const media = {
   plasticsStock: {
     file: 'plastics-stock.jpg',
     placeholder: ph('photo-1581093458791-9f3c3900df4b', 1400),
-    alt: 'Moulded plastic components collected in stillages beside a production line.',
+    alt: 'A metal stillage full of moulded plastic parts and offcuts, on a factory floor with machinery behind.',
     tone: ['#1b2a2e', '#3f6d75'],
   },
   textiles: {
     file: 'textiles.jpg',
     placeholder: ph('photo-1558769132-cb1aea458c5e', 1400),
-    alt: 'Rolls of fabric stacked on shelving in a textile production unit.',
+    alt: 'Rolls of fabric in muted colours stacked on steel racking, with hills visible through a warehouse window.',
     tone: ['#2c2026', '#6d4a56'],
   },
   packaging: {
     file: 'packaging.jpg',
     placeholder: ph('photo-1607344645866-009c320c5ab8', 1400),
-    alt: 'Flattened cardboard and packaging materials baled and stacked in a warehouse.',
+    alt: 'Baled and stacked flattened cardboard on pallets in a warehouse, with boxed stock racked behind.',
     tone: ['#332a1e', '#7d6540'],
   },
   manufacturingSurplus: {
     file: 'manufacturing-surplus.jpg',
     placeholder: ph('photo-1517048676732-d65bc937f952', 1400),
-    alt: 'Offcuts and part-used production materials collected at the end of a manufacturing line.',
+    alt: 'Crates of mixed offcuts, straps and part-used components on a factory floor, machinery out of focus behind.',
     tone: ['#26282a', '#565c60'],
   },
   warehouseAisle: {
     file: 'warehouse-aisle.jpg',
     placeholder: ph('photo-1553413077-190dd305871c', 1600),
-    alt: 'Palletised stock racked in a distribution warehouse.',
+    alt: 'A long warehouse aisle with mixed materials, timber, metal, fabric and boxed stock, racked on both sides.',
     tone: ['#22262a', '#4f575d'],
   },
   productionLine: {
