@@ -69,25 +69,25 @@ export const media = {
   heroWorkshop: {
     file: 'hero-workshop.jpg',
     placeholder: ph('photo-1565043666747-69f6646db940', 2000),
-    alt: 'Interior of a working manufacturing unit, with machinery and stacked stock under industrial roof lights.',
+    alt: 'Wide interior of a Welsh manufacturing workshop, with rows of machinery, stacked material and pallets under skylights.',
     tone: ['#23262a', '#4a4f54'],
   },
   fabrication: {
     file: 'fabrication.jpg',
     placeholder: ph('photo-1504328345606-18bbc8c9d7d1', 1400),
-    alt: 'A fabricator working at a bench in a metal workshop.',
+    alt: 'A pair of hands filing a steel bracket clamped in a vice at a workbench, tools laid out around it.',
     tone: ['#1d2124', '#44494d'],
   },
   timberYard: {
     file: 'timber-yard.jpg',
     placeholder: ph('photo-1516937941344-00b4e0337589', 1400),
-    alt: 'Sawn timber boards stacked and banded in a timber yard.',
+    alt: 'Sawn oak boards stacked and banded in a timber yard, with more stock racked behind.',
     tone: ['#3a2a1c', '#8a6338'],
   },
   metalStock: {
     file: 'metal-stock.jpg',
     placeholder: ph('photo-1581091226825-a6a2a5aee158', 1400),
-    alt: 'Sheet metal and steel sections racked in a fabrication workshop.',
+    alt: 'Steel box section and sheet offcuts racked on shelving in a metal fabrication workshop.',
     tone: ['#25292d', '#5d666c'],
   },
   plasticsStock: {
@@ -135,7 +135,7 @@ export const media = {
   palletStack: {
     file: 'pallet-stack.jpg',
     placeholder: ph('photo-1587293852726-70cdb56c2866', 1400),
-    alt: 'Wooden pallets stacked against the wall of a loading bay.',
+    alt: 'Stacked wooden pallets and bundled offcut material beside an open loading bay door.',
     tone: ['#342a1d', '#856a42'],
   },
 } satisfies Record<string, Media>;
