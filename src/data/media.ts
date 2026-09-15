@@ -123,13 +123,13 @@ export const media = {
   productionLine: {
     file: 'production-line.jpg',
     placeholder: ph('photo-1581092160562-40aa08e78837', 1600),
-    alt: 'An operator checking parts part-way along a production line.',
+    alt: 'A wide view along a manufacturing production line, with an operator working at the far end.',
     tone: ['#1f2326', '#4b5257'],
   },
   joinery: {
     file: 'joinery.jpg',
     placeholder: ph('photo-1572981779307-38b8cabb2407', 1400),
-    alt: 'A joiner cutting board material in a woodworking workshop.',
+    alt: 'A pair of hands guiding a timber board through a table saw, sawdust scattered across the bench.',
     tone: ['#38281a', '#8b6640'],
   },
   palletStack: {
