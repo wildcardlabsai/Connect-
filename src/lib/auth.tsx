@@ -11,15 +11,29 @@ import {
   claudeSwitchBusiness,
   getStoredBusinessId,
 } from './claudeDb';
-import type { Profile } from './database.types';
+import type { CompanyType, Profile } from './database.types';
 
-type SignUpInput = {
+export type SignUpInput = {
   email: string;
   password: string;
   companyName: string;
   contactName: string;
   location?: string;
   industry?: string;
+  phone?: string;
+  legalName?: string;
+  companyType?: CompanyType;
+  companiesHouseNumber?: string;
+  vatNumber?: string;
+  registeredAddressLine1?: string;
+  registeredAddressLine2?: string;
+  registeredCity?: string;
+  registeredPostcode?: string;
+  registeredCountry?: string;
+  jobTitle?: string;
+  website?: string;
+  /** Must be true to submit — enforced in the SignUp form, not here. */
+  termsAccepted: boolean;
 };
 
 /** Every page only ever reads `.id` off the signed-in user (checked across
@@ -153,10 +167,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin,
       loading,
 
-      async signUp({ email, password, companyName, contactName, location, industry }) {
+      async signUp(input) {
+        const {
+          email,
+          password,
+          companyName,
+          contactName,
+          location,
+          industry,
+          phone,
+          legalName,
+          companyType,
+          companiesHouseNumber,
+          vatNumber,
+          registeredAddressLine1,
+          registeredAddressLine2,
+          registeredCity,
+          registeredPostcode,
+          registeredCountry,
+          jobTitle,
+          website,
+          termsAccepted,
+        } = input;
+
         if (mode === 'claude-db') {
           try {
-            const business = await claudeCreateBusiness({ companyName, contactName, location, industry });
+            const business = await claudeCreateBusiness({
+              companyName,
+              contactName,
+              location,
+              industry,
+              phone,
+              legalName,
+              companyType,
+              companiesHouseNumber,
+              vatNumber,
+              registeredAddressLine1,
+              registeredAddressLine2,
+              registeredCity,
+              registeredPostcode,
+              registeredCountry,
+              jobTitle,
+              website,
+              termsAccepted,
+            });
             setUser({ id: business.id });
             setProfile(business);
             setIsAdmin(false);
@@ -176,13 +230,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // insert their own row, so this only succeeds once signUp above has
         // actually produced a session (email confirmation is off) or a user
         // id (confirmation is on, they confirm, then sign in and this runs
-        // again from the profile-completion prompt).
+        // again from the profile-completion prompt). `status` is left out
+        // deliberately: the insert policy requires it to be 'pending' and
+        // the column default already provides that.
         const { error: profileError } = await supabase.from('profiles').insert({
           id: data.user.id,
           company_name: companyName,
           contact_name: contactName,
           location: location || null,
           industry: industry || null,
+          phone: phone || null,
+          legal_name: legalName || null,
+          company_type: companyType || null,
+          companies_house_number: companiesHouseNumber || null,
+          vat_number: vatNumber || null,
+          registered_address_line1: registeredAddressLine1 || null,
+          registered_address_line2: registeredAddressLine2 || null,
+          registered_city: registeredCity || null,
+          registered_postcode: registeredPostcode || null,
+          registered_country: registeredCountry || 'United Kingdom',
+          job_title: jobTitle || null,
+          website: website || null,
+          terms_accepted_at: termsAccepted ? new Date().toISOString() : null,
         });
         if (profileError && !profileError.message.includes('duplicate key')) {
           return { error: profileError.message };

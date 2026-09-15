@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AdminLayout } from '../../components/app/AdminLayout';
+import { Button } from '../../components/ui/Button';
 import { fetchAdminStats } from '../../lib/api/admin';
 import { useSeo } from '../../lib/seo';
 
@@ -15,6 +16,10 @@ export default function AdminOverview() {
   return (
     <AdminLayout title="Overview">
       <div className="stat-grid">
+        <div className="stat-tile" style={stats && stats.pendingApprovals > 0 ? { borderTopColor: 'var(--c-orange)' } : undefined}>
+          <p className="stat-tile__value">{stats?.pendingApprovals ?? '—'}</p>
+          <p className="stat-tile__label">Pending approvals</p>
+        </div>
         <div className="stat-tile">
           <p className="stat-tile__value">{stats?.businesses ?? '—'}</p>
           <p className="stat-tile__label">Registered businesses</p>
@@ -32,6 +37,12 @@ export default function AdminOverview() {
           <p className="stat-tile__label">Open enquiries</p>
         </div>
       </div>
+
+      {stats && stats.pendingApprovals > 0 ? (
+        <Button to="/admin/businesses" variant="accent">
+          Review {stats.pendingApprovals === 1 ? 'the pending business' : `${stats.pendingApprovals} pending businesses`}
+        </Button>
+      ) : null}
     </AdminLayout>
   );
 }

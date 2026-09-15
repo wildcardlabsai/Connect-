@@ -26,6 +26,8 @@
 import { getClaudeDb } from './platform';
 import type { DbError, DocumentSnapshot, Unsubscribe } from './claudeDbTypes';
 import type {
+  BusinessStatus,
+  CompanyType,
   Conversation,
   Enquiry,
   EnquiryForm,
@@ -98,12 +100,35 @@ export async function claudeListBusinesses(): Promise<Profile[]> {
   return snapshot.docs.map((doc) => fromDoc<Profile>(doc));
 }
 
-export async function claudeCreateBusiness(input: {
+export type ClaudeBusinessInput = {
   companyName: string;
   contactName: string;
   location?: string;
   industry?: string;
-}): Promise<Profile> {
+  phone?: string;
+  legalName?: string;
+  companyType?: CompanyType;
+  companiesHouseNumber?: string;
+  vatNumber?: string;
+  registeredAddressLine1?: string;
+  registeredAddressLine2?: string;
+  registeredCity?: string;
+  registeredPostcode?: string;
+  registeredCountry?: string;
+  jobTitle?: string;
+  website?: string;
+  /** True once the signup form's consent checkbox was ticked. Recorded as a
+      timestamp, same as Supabase mode, even though nothing here enforces
+      what it points to — see platform.ts. */
+  termsAccepted?: boolean;
+};
+
+/** New businesses always start pending here too, same as Supabase mode:
+    matching real behaviour matters for trying the approval flow itself,
+    even though nothing in this mode actually secures it (see platform.ts
+    and claude-db-README.md). Approve via the demo admin toggle in Settings,
+    then Admin -> Businesses. */
+export async function claudeCreateBusiness(input: ClaudeBusinessInput): Promise<Profile> {
   const db = await requireDb();
   const id = newId();
   const body = {
@@ -111,14 +136,48 @@ export async function claudeCreateBusiness(input: {
     contact_name: input.contactName,
     location: input.location || null,
     industry: input.industry || null,
-    phone: null,
+    phone: input.phone || null,
     is_admin: false,
+    status: 'pending' as BusinessStatus,
+    legal_name: input.legalName || null,
+    company_type: input.companyType || null,
+    companies_house_number: input.companiesHouseNumber || null,
+    vat_number: input.vatNumber || null,
+    registered_address_line1: input.registeredAddressLine1 || null,
+    registered_address_line2: input.registeredAddressLine2 || null,
+    registered_city: input.registeredCity || null,
+    registered_postcode: input.registeredPostcode || null,
+    registered_country: input.registeredCountry || 'United Kingdom',
+    job_title: input.jobTitle || null,
+    website: input.website || null,
+    terms_accepted_at: input.termsAccepted ? nowIso() : null,
+    rejection_reason: null,
+    reviewed_at: null,
+    reviewed_by: null,
     created_at: nowIso(),
     updated_at: nowIso(),
   };
   await db.doc(`businesses/${id}`).set(body);
   setStoredBusinessId(id);
   return { id, ...body };
+}
+
+/** Demo-mode equivalent of an admin approving or rejecting a registration.
+    No real permission check backs this — see claude-db-README.md — but the
+    UI only exposes it behind the same "treat as admin" toggle as everything
+    else in this mode's admin panel. */
+export async function claudeSetBusinessStatus(
+  id: string,
+  status: BusinessStatus,
+  rejectionReason?: string,
+): Promise<void> {
+  const db = await requireDb();
+  await db.doc(`businesses/${id}`).update({
+    status,
+    rejection_reason: status === 'rejected' ? rejectionReason || null : null,
+    reviewed_at: nowIso(),
+    updated_at: nowIso(),
+  });
 }
 
 export function claudeSwitchBusiness(id: string) {
@@ -146,12 +205,24 @@ export type ClaudeListingInput = {
   frequency: Frequency;
 };
 
+/** The set of business ids currently approved. Fetched once per call site
+    that needs it rather than cached, since this mode has no push
+    invalidation — fine at the scale this mode runs at (see module doc). */
+async function fetchApprovedBusinessIds(): Promise<Set<string>> {
+  const db = await requireDb();
+  const snapshot = await db.collection('businesses').where('status', '==', 'approved').limit(1000).get();
+  return new Set(snapshot.docs.map((doc) => doc.id));
+}
+
 export async function claudeFetchActiveListings(categoryId?: string): Promise<Listing[]> {
   const db = await requireDb();
   let query = db.collection('listings').where('status', '==', 'active');
   if (categoryId) query = query.where('category_id', '==', categoryId);
-  const snapshot = await query.orderBy('created_at', 'desc').limit(500).get();
-  return snapshot.docs.map((doc) => fromDoc<Listing>(doc));
+  const [snapshot, approvedIds] = await Promise.all([
+    query.orderBy('created_at', 'desc').limit(500).get(),
+    fetchApprovedBusinessIds(),
+  ]);
+  return snapshot.docs.map((doc) => fromDoc<Listing>(doc)).filter((listing) => approvedIds.has(listing.seller_id));
 }
 
 export async function claudeFetchListing(id: string): Promise<Listing | null> {
@@ -215,8 +286,13 @@ export async function claudeFetchActiveRequirements(categoryId?: string): Promis
   const db = await requireDb();
   let query = db.collection('requirements').where('status', '==', 'active');
   if (categoryId) query = query.where('category_id', '==', categoryId);
-  const snapshot = await query.orderBy('created_at', 'desc').limit(500).get();
-  return snapshot.docs.map((doc) => fromDoc<Requirement>(doc));
+  const [snapshot, approvedIds] = await Promise.all([
+    query.orderBy('created_at', 'desc').limit(500).get(),
+    fetchApprovedBusinessIds(),
+  ]);
+  return snapshot.docs
+    .map((doc) => fromDoc<Requirement>(doc))
+    .filter((requirement) => approvedIds.has(requirement.buyer_id));
 }
 
 export async function claudeFetchRequirement(id: string): Promise<Requirement | null> {
@@ -273,14 +349,21 @@ export async function claudeDeleteRequirement(id: string): Promise<void> {
 export async function claudeRefreshMatches(): Promise<void> {
   const db = await requireDb();
 
-  const [listingsSnap, requirementsSnap, existingSnap] = await Promise.all([
+  const [listingsSnap, requirementsSnap, existingSnap, approvedIds] = await Promise.all([
     db.collection('listings').where('status', '==', 'active').limit(1000).get(),
     db.collection('requirements').where('status', '==', 'active').limit(1000).get(),
     db.collection('matches').limit(1000).get(),
+    fetchApprovedBusinessIds(),
   ]);
 
-  const listings = listingsSnap.docs.map((doc) => fromDoc<Listing>(doc));
-  const requirements = requirementsSnap.docs.map((doc) => fromDoc<Requirement>(doc));
+  // Only ever match between two approved businesses, exactly like
+  // refresh_matches() in the Supabase migration — a pending business's
+  // listing should never surface as a suggestion to anyone before it's
+  // actually live.
+  const listings = listingsSnap.docs.map((doc) => fromDoc<Listing>(doc)).filter((l) => approvedIds.has(l.seller_id));
+  const requirements = requirementsSnap.docs
+    .map((doc) => fromDoc<Requirement>(doc))
+    .filter((r) => approvedIds.has(r.buyer_id));
 
   const validIds = new Set<string>();
   const writes: Array<Promise<unknown>> = [];
@@ -493,17 +576,19 @@ export async function claudeSubmitEnquiry(input: ClaudeEnquiryInput): Promise<vo
    anyway. Real access control does not exist in this mode; see platform.ts. */
 export async function claudeFetchAdminStats() {
   const db = await requireDb();
-  const [listings, requirements, businesses, enquiries] = await Promise.all([
+  const [listings, requirements, businesses, enquiries, pending] = await Promise.all([
     db.collection('listings').where('status', '==', 'active').get(),
     db.collection('requirements').where('status', '==', 'active').get(),
     db.collection('businesses').get(),
     db.collection('enquiries').where('handled', '==', false).get(),
+    db.collection('businesses').where('status', '==', 'pending').get(),
   ]);
   return {
     activeListings: listings.size,
     activeRequirements: requirements.size,
     businesses: businesses.size,
     openEnquiries: enquiries.size,
+    pendingApprovals: pending.size,
   };
 }
 

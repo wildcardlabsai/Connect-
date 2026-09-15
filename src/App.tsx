@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { RootLayout } from './components/layout/RootLayout';
-import { RequireAuth, RequireAdmin, RequirePlatform } from './lib/guards';
+import { RequireAuth, RequireAdmin, RequireApproved, RequirePlatform } from './lib/guards';
 
 import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
@@ -12,6 +12,8 @@ import Contact from './pages/Contact';
 import Browse from './pages/Browse';
 import ListingDetail from './pages/ListingDetail';
 import NotFound from './pages/NotFound';
+import Terms from './pages/legal/Terms';
+import Privacy from './pages/legal/Privacy';
 
 import Login from './pages/auth/Login';
 import SignUp from './pages/auth/SignUp';
@@ -30,6 +32,7 @@ import AdminOverview from './pages/admin/AdminOverview';
 import AdminListings from './pages/admin/AdminListings';
 import AdminRequirements from './pages/admin/AdminRequirements';
 import AdminBusinesses from './pages/admin/AdminBusinesses';
+import AdminBusinessDetail from './pages/admin/AdminBusinessDetail';
 import AdminEnquiries from './pages/admin/AdminEnquiries';
 
 /** Wraps an /app or /admin page: a backend must be connected (Supabase, or
@@ -51,6 +54,19 @@ function ProtectedAdmin({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** As Protected, but also requires the business to be approved — for
+    everything in the dashboard except Settings, which stays reachable so a
+    pending or rejected business can still see and correct its details. */
+function ProtectedApproved({ children }: { children: React.ReactNode }) {
+  return (
+    <RequirePlatform>
+      <RequireAuth>
+        <RequireApproved>{children}</RequireApproved>
+      </RequireAuth>
+    </RequirePlatform>
+  );
+}
+
 export default function App() {
   return (
     <Routes>
@@ -63,6 +79,8 @@ export default function App() {
         <Route path="about" element={<About />} />
         <Route path="founding-network" element={<FoundingNetwork />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="terms" element={<Terms />} />
+        <Route path="privacy" element={<Privacy />} />
 
         {/* --- Auth -------------------------------------------------------- */}
         <Route path="login" element={<Login />} />
@@ -74,17 +92,20 @@ export default function App() {
         <Route path="browse" element={<Browse />} />
         <Route path="browse/:id" element={<ListingDetail />} />
 
-        {/* --- Business dashboard ------------------------------------------ */}
-        <Route path="app" element={<Protected><Dashboard /></Protected>} />
-        <Route path="app/listings" element={<Protected><MyListings /></Protected>} />
-        <Route path="app/listings/new" element={<Protected><ListingForm /></Protected>} />
-        <Route path="app/listings/:id/edit" element={<Protected><ListingForm /></Protected>} />
-        <Route path="app/requirements" element={<Protected><MyRequirements /></Protected>} />
-        <Route path="app/requirements/new" element={<Protected><RequirementForm /></Protected>} />
-        <Route path="app/requirements/:id/edit" element={<Protected><RequirementForm /></Protected>} />
-        <Route path="app/matches" element={<Protected><Matches /></Protected>} />
-        <Route path="app/messages" element={<Protected><Messages /></Protected>} />
-        <Route path="app/messages/:id" element={<Protected><ConversationPage /></Protected>} />
+        {/* --- Business dashboard ------------------------------------------
+            Everything except Settings also requires the business to be
+            approved (RequireApproved) — a pending or rejected account sees a
+            holding screen here instead. */}
+        <Route path="app" element={<ProtectedApproved><Dashboard /></ProtectedApproved>} />
+        <Route path="app/listings" element={<ProtectedApproved><MyListings /></ProtectedApproved>} />
+        <Route path="app/listings/new" element={<ProtectedApproved><ListingForm /></ProtectedApproved>} />
+        <Route path="app/listings/:id/edit" element={<ProtectedApproved><ListingForm /></ProtectedApproved>} />
+        <Route path="app/requirements" element={<ProtectedApproved><MyRequirements /></ProtectedApproved>} />
+        <Route path="app/requirements/new" element={<ProtectedApproved><RequirementForm /></ProtectedApproved>} />
+        <Route path="app/requirements/:id/edit" element={<ProtectedApproved><RequirementForm /></ProtectedApproved>} />
+        <Route path="app/matches" element={<ProtectedApproved><Matches /></ProtectedApproved>} />
+        <Route path="app/messages" element={<ProtectedApproved><Messages /></ProtectedApproved>} />
+        <Route path="app/messages/:id" element={<ProtectedApproved><ConversationPage /></ProtectedApproved>} />
         <Route path="app/settings" element={<Protected><Settings /></Protected>} />
 
         {/* --- Admin --------------------------------------------------------- */}
@@ -92,6 +113,7 @@ export default function App() {
         <Route path="admin/listings" element={<ProtectedAdmin><AdminListings /></ProtectedAdmin>} />
         <Route path="admin/requirements" element={<ProtectedAdmin><AdminRequirements /></ProtectedAdmin>} />
         <Route path="admin/businesses" element={<ProtectedAdmin><AdminBusinesses /></ProtectedAdmin>} />
+        <Route path="admin/businesses/:id" element={<ProtectedAdmin><AdminBusinessDetail /></ProtectedAdmin>} />
         <Route path="admin/enquiries" element={<ProtectedAdmin><AdminEnquiries /></ProtectedAdmin>} />
 
         <Route path="*" element={<NotFound />} />

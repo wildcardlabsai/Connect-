@@ -190,6 +190,50 @@ export function SelectField({
   );
 }
 
+export function CheckboxField({
+  label,
+  name,
+  checked,
+  onChange,
+  error,
+  required = false,
+}: {
+  label: ReactNode;
+  name: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  error?: string;
+  required?: boolean;
+}) {
+  const id = useId();
+  const errorId = `${id}-error`;
+
+  return (
+    <div className={`field field--checkbox${error ? ' field--invalid' : ''}`}>
+      <label className="checkbox" htmlFor={id}>
+        <input
+          className="checkbox__input"
+          id={id}
+          name={name}
+          type="checkbox"
+          checked={checked}
+          required={required}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
+          onChange={(event) => onChange(event.target.checked)}
+        />
+        <span className="checkbox__box" aria-hidden="true" />
+        <span className="checkbox__label">{label}</span>
+      </label>
+      {error ? (
+        <p className="field__error" id={errorId} role="alert">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function RadioGroup({
   legend,
   name,

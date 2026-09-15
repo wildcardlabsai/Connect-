@@ -13,6 +13,24 @@
   gap: var(--s-5);
 }
 
+.form__section-title {
+  font-size: var(--t-small);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+
+.form__section-intro {
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 52ch;
+  margin-top: calc(var(--s-3) * -1);
+}
+
 @media (min-width: 640px) {
   .form__grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -191,6 +209,52 @@
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
 }
+
+/* --- Checkbox ----------------------------------------------------------------- */
+.field--checkbox { gap: var(--s-1); }
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  cursor: pointer;
+}
+
+.checkbox__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox__box {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 0.15em;
+  border: 1px solid var(--line-strong);
+  background-color: #fff;
+  transition: border-color var(--d-fast) var(--ease), box-shadow var(--d-fast) var(--ease);
+}
+
+.checkbox__input:checked + .checkbox__box {
+  border-color: var(--c-ink);
+  box-shadow: inset 0 0 0 3px var(--c-red);
+}
+
+.checkbox__input:focus-visible + .checkbox__box {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.checkbox__label {
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.field--invalid .checkbox__box { border-color: var(--c-red); }
 
 /* --- Submission state --------------------------------------------------------- */
 .form__foot {

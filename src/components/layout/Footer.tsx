@@ -30,8 +30,15 @@ export function Footer() {
       </div>
 
       <div className="container footer__base">
-        <p className="footer__status">ConnectCymru is currently preparing for launch.</p>
         <p className="footer__copyright">&copy; 2026 ConnectCymru</p>
+        <nav className="footer__legal" aria-label="Legal">
+          <Link to="/terms" className="footer__link">
+            Terms of use
+          </Link>
+          <Link to="/privacy" className="footer__link">
+            Privacy policy
+          </Link>
+        </nav>
       </div>
     </footer>
   );

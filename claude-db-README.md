@@ -35,6 +35,15 @@ any business's listings, requirements or messages, whichever one they last chose
 act as. The admin panel matches this honestly too: there's no real permission check,
 just a checkbox in Settings that a business ticks for itself.
 
+**Approval status is filtered, not enforced.** New businesses still start `pending`
+and see the same holding screen as Supabase mode, and `claudeFetchActiveListings` /
+`claudeFetchActiveRequirements` / `claudeRefreshMatches` only surface data from
+approved businesses (see `claudeDb.ts`). But there's no row-level security here to
+back it up — it's ordinary client-side filtering, so it demonstrates the workflow
+rather than actually securing it. Toggle "treat this business as admin" for a
+different business in Settings, then approve or reject the pending one from
+Admin → Businesses, to see the whole flow end to end.
+
 ## What it's for
 
 Trying the actual thing — sign up as a seller, list a material, sign up as a buyer,

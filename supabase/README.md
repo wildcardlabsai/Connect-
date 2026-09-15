@@ -20,10 +20,13 @@ the admin panel. Ten minutes, no card required.
 3. Open `supabase/migrations/0001_init.sql` from this repository, copy the
    whole file, and paste it into the editor.
 4. Click **Run**.
+5. Repeat steps 2–4 with `supabase/migrations/0002_business_verification.sql`.
+   Run it after `0001_init.sql`, in the same way, in the same project.
 
-That one file creates every table, the row-level security rules that keep
-one business from reading another's private data, and a storage bucket for
-listing photographs. It's safe to run again if you ever need to.
+Between them, these two files create every table, the row-level security
+rules that keep one business from reading another's private data, the
+registration/approval workflow described below, and a storage bucket for
+listing photographs. Both are safe to run again if you ever need to.
 
 ## 3. Get your two keys
 
@@ -69,7 +72,8 @@ select id, 'admin' from auth.users where email = 'you@yourcompany.co.uk';
 ```
 
 Sign out and back in (or just refresh), and an **Admin** link appears in the
-header.
+header. An admin account also bypasses the pending-verification screen on
+its own account, so you don't need to approve yourself to use the platform.
 
 ## 6. Optional: turn off email confirmation while testing
 
@@ -97,9 +101,35 @@ turn off "Confirm email". Turn it back on before you launch for real.
   to talk about a listing or requirement, with live updates.
 - **Browse** (`/browse`) — any signed-in business can see everyone's active
   listings.
-- **Admin** (`/admin`) — overview numbers, the ability to remove a listing,
-  a read-only view of every requirement and business, and the founding
-  network / contact form submissions in one place.
+- **Admin** (`/admin`) — overview numbers including pending approvals, the
+  ability to remove a listing, approve or reject a registered business, a
+  read-only view of every requirement, and the founding network / contact
+  form submissions in one place.
+
+## Business verification (registration approval)
+
+Every new sign-up starts with `status = 'pending'`. A pending business can
+sign in and see its own dashboard, but sees a holding screen instead of
+listings, requirements, matches or messages — and the database itself
+refuses to let it create a listing, post a requirement, or show up in
+anyone else's browse/matches, whatever the client sends (see
+`0002_business_verification.sql`, particularly the row-level security
+policies and the `profiles_protect_admin_fields` trigger).
+
+To approve or reject:
+
+1. Sign in as an admin (see step 5 above) and go to **Admin → Businesses**.
+2. Pending businesses sort to the top. Click **Review** to see everything
+   they submitted at registration (legal name, company type, Companies
+   House number, VAT number, registered address, website), or **Quick
+   approve** to approve straight from the list.
+3. Rejecting asks for a reason, which the business sees on their own
+   pending screen and in Settings, so they know what to fix.
+
+Only an admin can change a business's status — the trigger blocks anyone
+else, including the business itself, from writing to `status`,
+`reviewed_at`, `reviewed_by` or `rejection_reason`, regardless of what the
+API is asked to write.
 
 ## What's deliberately not automated
 
