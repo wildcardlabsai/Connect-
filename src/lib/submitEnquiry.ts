@@ -3,19 +3,23 @@
    --------------------------------------------------------------------------
    THIS IS THE ONLY PLACE THE FOUNDING NETWORK AND CONTACT FORMS SEND DATA.
 
-   Three ways this can behave, tried in order:
+   Four ways this can behave, tried in order:
 
      1. Supabase configured (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY set):
         the submission is written to the `enquiries` table for real, and
         shows up in the admin panel under Enquiries.
-     2. VITE_ENQUIRY_ENDPOINT set instead: POSTed there as JSON, for a
+     2. Running live in a Claude conversation with the database capability
+        granted, and Supabase isn't configured: written to Claude's own
+        database instead — see platform.ts and claudeDb.ts for what that
+        means and its limits.
+     3. VITE_ENQUIRY_ENDPOINT set instead: POSTed there as JSON, for a
         different backend or a hosted form service.
-     3. Neither set: simulates success locally after a short delay. Nothing
-        is stored and nothing leaves the browser. This is the state the site
-        ships in before either is configured.
+     4. None of the above: simulates success locally after a short delay.
+        Nothing is stored and nothing leaves the browser. This is the state
+        the site ships in before any backend is configured.
    ========================================================================== */
 
-import { isSupabaseConfigured } from './supabase';
+import { resolvePlatformMode } from './platform';
 import { submitEnquiryToDb } from './api/enquiries';
 import type { EnquiryForm } from './database.types';
 
@@ -35,7 +39,9 @@ const GENERIC_ERROR =
   'Something went wrong sending your details. Please try again in a moment.';
 
 export async function submitEnquiry(payload: EnquiryPayload): Promise<SubmitResult> {
-  if (isSupabaseConfigured) {
+  const mode = await resolvePlatformMode();
+
+  if (mode === 'supabase' || mode === 'claude-db') {
     try {
       const f = payload.fields;
       await submitEnquiryToDb({

@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { RootLayout } from './components/layout/RootLayout';
-import { RequireAuth, RequireAdmin, RequireSupabase } from './lib/guards';
+import { RequireAuth, RequireAdmin, RequirePlatform } from './lib/guards';
 
 import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
@@ -32,21 +32,22 @@ import AdminRequirements from './pages/admin/AdminRequirements';
 import AdminBusinesses from './pages/admin/AdminBusinesses';
 import AdminEnquiries from './pages/admin/AdminEnquiries';
 
-/** Wraps an /app or /admin page: Supabase must be configured and the visitor
-    signed in before any of these render. */
+/** Wraps an /app or /admin page: a backend must be connected (Supabase, or
+    Claude's own database — see platform.ts) and the visitor signed in
+    before any of these render. */
 function Protected({ children }: { children: React.ReactNode }) {
   return (
-    <RequireSupabase>
+    <RequirePlatform>
       <RequireAuth>{children}</RequireAuth>
-    </RequireSupabase>
+    </RequirePlatform>
   );
 }
 
 function ProtectedAdmin({ children }: { children: React.ReactNode }) {
   return (
-    <RequireSupabase>
+    <RequirePlatform>
       <RequireAdmin>{children}</RequireAdmin>
-    </RequireSupabase>
+    </RequirePlatform>
   );
 }
 

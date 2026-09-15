@@ -1,4 +1,6 @@
 import { supabase } from '../supabase';
+import { resolvePlatformMode } from '../platform';
+import { claudeFetchMatchesForBuyer, claudeFetchMatchesForSeller } from '../claudeDb';
 import type { Listing, MatchRow, Requirement } from '../database.types';
 
 export type ListingMatch = MatchRow & { requirement: Requirement };
@@ -6,6 +8,8 @@ export type RequirementMatch = MatchRow & { listing: Listing };
 
 /** Matches for every listing a seller owns, requirement details attached. */
 export async function fetchMatchesForSeller(sellerId: string): Promise<ListingMatch[]> {
+  if ((await resolvePlatformMode()) === 'claude-db') return claudeFetchMatchesForSeller(sellerId);
+
   const { data: listings, error: listingsError } = await supabase
     .from('listings')
     .select('id')
@@ -25,6 +29,8 @@ export async function fetchMatchesForSeller(sellerId: string): Promise<ListingMa
 
 /** Matches for every requirement a buyer owns, listing details attached. */
 export async function fetchMatchesForBuyer(buyerId: string): Promise<RequirementMatch[]> {
+  if ((await resolvePlatformMode()) === 'claude-db') return claudeFetchMatchesForBuyer(buyerId);
+
   const { data: requirements, error: requirementsError } = await supabase
     .from('requirements')
     .select('id')

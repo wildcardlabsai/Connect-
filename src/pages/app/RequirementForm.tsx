@@ -4,8 +4,7 @@ import { DashboardLayout } from '../../components/app/DashboardLayout';
 import { SelectField, TextAreaField, TextField } from '../../components/forms/Fields';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../lib/auth';
-import { createRequirement, updateRequirement } from '../../lib/api/requirements';
-import { supabase } from '../../lib/supabase';
+import { createRequirement, fetchRequirement, updateRequirement } from '../../lib/api/requirements';
 import type { Requirement } from '../../lib/database.types';
 import { materialCategories, otherCategory } from '../../data/materials';
 import { compact, requiredText } from '../../lib/validation';
@@ -48,24 +47,18 @@ export default function RequirementForm() {
 
   useEffect(() => {
     if (!isEdit || !id) return;
-    supabase
-      .from('requirements')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle()
-      .then(({ data }) => {
-        const requirement = data as Requirement | null;
-        if (!requirement) return;
-        setExisting(requirement);
-        setValues({
-          category: CATEGORY_NAME_BY_ID.get(requirement.category_id) ?? '',
-          title: requirement.title,
-          description: requirement.description,
-          quantityNeeded: requirement.quantity_needed ?? '',
-          locationPreference: requirement.location_preference ?? '',
-        });
-        setLoading(false);
+    fetchRequirement(id).then((requirement) => {
+      if (!requirement) return;
+      setExisting(requirement);
+      setValues({
+        category: CATEGORY_NAME_BY_ID.get(requirement.category_id) ?? '',
+        title: requirement.title,
+        description: requirement.description,
+        quantityNeeded: requirement.quantity_needed ?? '',
+        locationPreference: requirement.location_preference ?? '',
       });
+      setLoading(false);
+    });
   }, [isEdit, id]);
 
   const set = (field: FieldName) => (value: string) => {

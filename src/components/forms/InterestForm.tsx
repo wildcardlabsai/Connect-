@@ -3,7 +3,7 @@ import { Button } from '../ui/Button';
 import { RadioGroup, SelectField, TextAreaField, TextField } from './Fields';
 import { FormSuccess } from './FormSuccess';
 import { submitEnquiry } from '../../lib/submitEnquiry';
-import { isSupabaseConfigured } from '../../lib/supabase';
+import { usePlatformMode } from '../../lib/usePlatformMode';
 import { compact, requiredEmail, requiredText } from '../../lib/validation';
 import type { Errors } from '../../lib/validation';
 import './form.css';
@@ -42,14 +42,14 @@ const EMPTY: Record<FieldName, string> = {
   message: '',
 };
 
-/** Real submissions once Supabase is configured; otherwise this is honest
-    about the form being a local simulation. */
-const backendMeta = isSupabaseConfigured
-  ? undefined
-  : 'This site is not connected to a backend yet, so your details have not been stored or sent anywhere.';
-
-
 export function InterestForm() {
+  const mode = usePlatformMode();
+  // Real submissions once a backend is connected; otherwise this is
+  // honest about the form being a local simulation.
+  const backendMeta =
+    mode === 'supabase' || mode === 'claude-db'
+      ? undefined
+      : 'This site is not connected to a backend yet, so your details have not been stored or sent anywhere.';
   const [values, setValues] = useState(EMPTY);
   const [errors, setErrors] = useState<Errors<FieldName>>({});
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');

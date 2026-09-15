@@ -17,6 +17,13 @@ The platform runs on Supabase and **does nothing until you connect one** — see
 routes show a plain "not connected yet" message rather than crashing, and the marketing
 site works exactly as before.
 
+There is a second, much more limited way those routes can switch on: running live
+inside a Claude conversation with the database capability granted, using Claude's own
+database instead of Supabase. It exists purely so the product can be tried with nothing
+to set up — it cannot be shared with anyone, and has no real login. See
+[`claude-db-README.md`](claude-db-README.md) for exactly what that means. It has zero
+effect on a real deployment: `window.claude` doesn't exist outside Claude's own hosting.
+
 ## Stack
 
 - React 19 + TypeScript

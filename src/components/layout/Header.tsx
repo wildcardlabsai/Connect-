@@ -5,11 +5,16 @@ import { Logo } from '../brand/Logo';
 import { Button } from '../ui/Button';
 import { JOIN_LABEL, JOIN_PATH, primaryNav } from '../../data/nav';
 import { useAuth } from '../../lib/auth';
-import { isSupabaseConfigured } from '../../lib/supabase';
+import { usePlatformMode } from '../../lib/usePlatformMode';
 import './Header.css';
 
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
+  // Treats the brief 'loading' window as not-connected, so the far more
+  // common case (a plain static host, mode settles to 'none') never shows
+  // these buttons only to hide them a moment later.
+  const platformMode = usePlatformMode();
+  const isPlatformConnected = platformMode === 'supabase' || platformMode === 'claude-db';
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(() => window.scrollY > 8);
   const { pathname } = useLocation();
@@ -102,13 +107,13 @@ export function Header() {
         </nav>
 
         <div className="header__actions">
-          {isSupabaseConfigured ? (
+          {isPlatformConnected ? (
             <Button to="/browse" variant="link" size="sm" className="header__cta">
               Browse
             </Button>
           ) : null}
 
-          {isSupabaseConfigured && user ? (
+          {isPlatformConnected && user ? (
             <>
               {isAdmin ? (
                 <Button to="/admin" variant="outline" size="sm" className="header__cta">
@@ -124,7 +129,7 @@ export function Header() {
             </>
           ) : (
             <>
-              {isSupabaseConfigured ? (
+              {isPlatformConnected ? (
                 <Button to="/login" variant="link" size="sm" className="header__cta">
                   Log in
                 </Button>
@@ -176,7 +181,7 @@ export function Header() {
                 </NavLink>
               </li>
             ))}
-            {isSupabaseConfigured ? (
+            {isPlatformConnected ? (
               <li style={{ '--i': primaryNav.length } as CSSProperties}>
                 <NavLink
                   to="/browse"
@@ -188,7 +193,7 @@ export function Header() {
             ) : null}
           </ul>
 
-          {isSupabaseConfigured && user ? (
+          {isPlatformConnected && user ? (
             <div className="header__menu-actions">
               {isAdmin ? (
                 <Button to="/admin" variant="outline" size="lg" fullWidth>
@@ -204,7 +209,7 @@ export function Header() {
             </div>
           ) : (
             <div className="header__menu-actions">
-              {isSupabaseConfigured ? (
+              {isPlatformConnected ? (
                 <Button to="/login" variant="outline" size="lg" fullWidth>
                   Log in
                 </Button>

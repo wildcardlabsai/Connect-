@@ -4,7 +4,7 @@ import { PageHero } from '../components/layout/PageHero';
 import { fetchActiveListings } from '../lib/api/listings';
 import type { Listing } from '../lib/database.types';
 import { materialCategories, otherCategory } from '../data/materials';
-import { RequireSupabase } from '../lib/guards';
+import { RequirePlatform } from '../lib/guards';
 import { useAuth } from '../lib/auth';
 import { Button } from '../components/ui/Button';
 import { useSeo } from '../lib/seo';
@@ -106,9 +106,9 @@ export default function Browse() {
         lead="Materials listed by businesses on ConnectCymru. Sign in to see the full list and get in touch."
       />
       <section className="section container">
-        <RequireSupabase>
+        <RequirePlatform>
           <BrowseList />
-        </RequireSupabase>
+        </RequirePlatform>
       </section>
     </>
   );

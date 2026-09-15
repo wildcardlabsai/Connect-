@@ -43,7 +43,7 @@ const EMPTY: Record<FieldName, string> = {
 export default function ListingForm() {
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
-  const { user } = useAuth();
+  const { user, mode } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -233,17 +233,23 @@ export default function ListingForm() {
           <label className="field__label" htmlFor="listing-photos">
             Photographs <span className="field__optional">(optional)</span>
           </label>
-          <p className="field__hint">Photographs of the material as it stands.</p>
-          <input
-            id="listing-photos"
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={(event) => handleFilesSelected(event.target.files)}
-          />
+          {mode === 'claude-db' ? (
+            <p className="field__hint">Photo uploads aren&rsquo;t available in this demo mode.</p>
+          ) : (
+            <>
+              <p className="field__hint">Photographs of the material as it stands.</p>
+              <input
+                id="listing-photos"
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(event) => handleFilesSelected(event.target.files)}
+              />
+            </>
+          )}
 
-          {(photoPaths.length > 0 || pendingFiles.length > 0) && (
+          {mode !== 'claude-db' && (photoPaths.length > 0 || pendingFiles.length > 0) && (
             <ul className="photo-picker">
               {photoPaths.map((path) => (
                 <li key={path} className="photo-picker__item">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { PageHero } from '../../components/layout/PageHero';
-import { RequireSupabase } from '../../lib/guards';
+import { RequirePlatform } from '../../lib/guards';
 import { useAuth } from '../../lib/auth';
 import { TextField } from '../../components/forms/Fields';
 import { Button } from '../../components/ui/Button';
@@ -22,7 +22,8 @@ const EMPTY: Record<FieldName, string> = {
 };
 
 function SignUpForm() {
-  const { user, loading, signUp } = useAuth();
+  const { user, loading, signUp, mode } = useAuth();
+  const isClaudeDb = mode === 'claude-db';
   const navigate = useNavigate();
   const [values, setValues] = useState(EMPTY);
   const [errors, setErrors] = useState<Errors<FieldName>>({});
@@ -44,8 +45,8 @@ function SignUpForm() {
     const found = compact<FieldName>({
       companyName: requiredText(values.companyName, 'Company name'),
       contactName: requiredText(values.contactName, 'Your name'),
-      email: requiredEmail(values.email),
-      password: values.password.length < 8 ? 'Use at least 8 characters.' : undefined,
+      email: isClaudeDb ? undefined : requiredEmail(values.email),
+      password: isClaudeDb || values.password.length >= 8 ? undefined : 'Use at least 8 characters.',
     });
     setErrors(found);
     if (Object.keys(found).length > 0) return;
@@ -109,27 +110,36 @@ function SignUpForm() {
         />
       </div>
 
-      <TextField
-        label="Email"
-        name="email"
-        type="email"
-        value={values.email}
-        onChange={set('email')}
-        error={errors.email}
-        required
-        autoComplete="email"
-      />
-      <TextField
-        label="Password"
-        name="password"
-        type="password"
-        value={values.password}
-        onChange={set('password')}
-        error={errors.password}
-        required
-        hint="At least 8 characters."
-        autoComplete="new-password"
-      />
+      {isClaudeDb ? (
+        <p className="field__hint" style={{ marginTop: '-0.5rem' }}>
+          This demo has no password to check, so there is nothing to enter here beyond a
+          name for the business.
+        </p>
+      ) : (
+        <>
+          <TextField
+            label="Email"
+            name="email"
+            type="email"
+            value={values.email}
+            onChange={set('email')}
+            error={errors.email}
+            required
+            autoComplete="email"
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            value={values.password}
+            onChange={set('password')}
+            error={errors.password}
+            required
+            hint="At least 8 characters."
+            autoComplete="new-password"
+          />
+        </>
+      )}
       <TextField
         label="Location"
         name="location"
@@ -147,7 +157,7 @@ function SignUpForm() {
 
       <div className="form__foot">
         <Button type="submit" variant="accent" size="lg" disabled={submitting}>
-          {submitting ? 'Creating account...' : 'Create account'}
+          {submitting ? 'Creating...' : isClaudeDb ? 'Create business' : 'Create account'}
         </Button>
         <p className="form__privacy">
           Already have an account? <Link to="/login">Sign in</Link>.
@@ -172,9 +182,9 @@ export default function SignUp() {
         lead="One account covers both sides: list what you have, and look for what you need."
       />
       <section className="section container container--narrow">
-        <RequireSupabase>
+        <RequirePlatform>
           <SignUpForm />
-        </RequireSupabase>
+        </RequirePlatform>
       </section>
     </>
   );

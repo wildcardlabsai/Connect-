@@ -24,6 +24,12 @@ export type Profile = {
   phone: string | null;
   created_at: string;
   updated_at: string;
+  /**
+   * Only meaningful in claude-db mode, where there is no separate roles
+   * table to check (see lib/claudeDb.ts). Always undefined under Supabase,
+   * which keeps admin as a role grant instead — see user_roles.
+   */
+  is_admin?: boolean;
 };
 
 export type MaterialCategoryRow = {

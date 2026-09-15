@@ -1,4 +1,6 @@
 import { supabase } from '../supabase';
+import { resolvePlatformMode } from '../platform';
+import { claudeSubmitEnquiry } from '../claudeDb';
 import type { EnquiryForm } from '../database.types';
 
 export type EnquiryInput = {
@@ -12,8 +14,11 @@ export type EnquiryInput = {
   message?: string;
 };
 
-/** Public insert: works whether or not anyone is signed in (see RLS policy). */
+/** Public insert: works whether or not anyone is signed in (see RLS policy
+    in Supabase mode; claude-db mode has no such distinction). */
 export async function submitEnquiryToDb(input: EnquiryInput) {
+  if ((await resolvePlatformMode()) === 'claude-db') return claudeSubmitEnquiry(input);
+
   const { error } = await supabase.from('enquiries').insert({
     form_name: input.formName,
     name: input.name,

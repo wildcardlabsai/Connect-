@@ -3,10 +3,9 @@ import { useParams } from 'react-router-dom';
 import { DashboardLayout } from '../../components/app/DashboardLayout';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../lib/auth';
-import { fetchMessages, fetchMyConversations, sendMessage } from '../../lib/api/messages';
+import { fetchMessages, fetchMyConversations, sendMessage, subscribeToMessages } from '../../lib/api/messages';
 import type { ConversationWithParties } from '../../lib/api/messages';
 import type { Message } from '../../lib/database.types';
-import { supabase } from '../../lib/supabase';
 import { useSeo } from '../../lib/seo';
 import './conversation.css';
 
@@ -28,23 +27,29 @@ export default function ConversationPage() {
   useEffect(() => {
     if (!id || !user) return;
 
-    fetchMyConversations(user.id).then((all) => {
-      setConversation(all.find((c) => c.id === id) ?? null);
-    });
-    fetchMessages(id).then(setMessages);
+    let cancelled = false;
+    let unsubscribe: (() => void) | null = null;
 
-    // Live updates: new messages in this conversation appear without a reload.
-    const channel = supabase
-      .channel(`conversation-${id}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${id}` },
-        (payload) => setMessages((current) => [...current, payload.new as Message]),
-      )
-      .subscribe();
+    fetchMyConversations(user.id).then((all) => {
+      if (!cancelled) setConversation(all.find((c) => c.id === id) ?? null);
+    });
+    fetchMessages(id).then((initial) => {
+      if (!cancelled) setMessages(initial);
+    });
+
+    // Live updates: new messages in this conversation appear without a
+    // reload, on whichever backend is active. `onChange` always delivers
+    // the full current list — see subscribeToMessages for why.
+    subscribeToMessages(id, (current) => {
+      if (!cancelled) setMessages(current);
+    }).then((unsub) => {
+      if (cancelled) unsub();
+      else unsubscribe = unsub;
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      unsubscribe?.();
     };
   }, [id, user]);
 

@@ -3,12 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageHero } from '../components/layout/PageHero';
 import { Note } from '../components/ui/Note';
 import { Button } from '../components/ui/Button';
-import { RequireAuth, RequireSupabase } from '../lib/guards';
+import { RequireAuth, RequirePlatform } from '../lib/guards';
 import { useAuth } from '../lib/auth';
 import { fetchListing, listingPhotoUrl } from '../lib/api/listings';
 import { startConversation } from '../lib/api/messages';
+import { fetchProfile } from '../lib/api/profiles';
 import type { Listing, Profile } from '../lib/database.types';
-import { supabase } from '../lib/supabase';
 import { materialCategories, otherCategory } from '../data/materials';
 import { useSeo } from '../lib/seo';
 import './ListingDetail.css';
@@ -28,8 +28,7 @@ function ListingDetailBody() {
     fetchListing(id).then(async (found) => {
       setListing(found);
       if (found) {
-        const { data } = await supabase.from('profiles').select('*').eq('id', found.seller_id).maybeSingle();
-        setSeller(data as Profile | null);
+        setSeller(await fetchProfile(found.seller_id));
       }
     });
   }, [id]);
@@ -153,11 +152,11 @@ export default function ListingDetail() {
     <>
       <PageHero eyebrow="Listing" title="Material details." />
       <section className="section container">
-        <RequireSupabase>
+        <RequirePlatform>
           <RequireAuth>
             <ListingDetailBody />
           </RequireAuth>
-        </RequireSupabase>
+        </RequirePlatform>
       </section>
     </>
   );

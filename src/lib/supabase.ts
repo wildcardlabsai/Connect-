@@ -16,7 +16,7 @@ export const isSupabaseConfigured = Boolean(url && anonKey);
  * variables are missing this still returns a working client pointed at a
  * placeholder project, so a stray import can't crash the app at load time.
  * Every real call site should check `isSupabaseConfigured` first (the
- * `useAuth` hook and the `RequireSupabase` wrapper already do), rather than
+ * `useAuth` hook and the `RequirePlatform` wrapper already do), rather than
  * relying on this call to fail.
  */
 // No generic schema type here: without the Supabase CLI to generate one, a
